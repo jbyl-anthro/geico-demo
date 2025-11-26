@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEICO Claims Intelligence Demo | Powered by Claude</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* GEICO Primary Colors */
+            --geico-blue: #003D7A;
+            --geico-navy: #002B5C;
+            --geico-bright-blue: #0066CC;
+
+            /* GEICO Secondary Colors */
+            --geico-green: #78BE20;
+            --geico-green-dark: #5FA015;
+            --geico-orange: #FF6B00;
+            --geico-yellow: #FFD100;
+
+            /* Neutrals */
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+
+            /* Status Colors */
+            --status-active: #78BE20;
+            --status-complete: #0066CC;
+            --status-flagged: #FF6B00;
+            --status-idle: #999999;
+
+            /* Typography */
+            --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
+            --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .logo span {
+            color: var(--geico-green);
+        }
+
+        .claim-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .claim-badge strong {
+            color: var(--geico-green);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .timer {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            color: var(--geico-green);
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            border: none;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--geico-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--geico-green-dark);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--geico-navy);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+            padding: 2rem;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            max-width: 700px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .welcome-header {
+            background: var(--geico-blue);
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .welcome-header h1 {
+            font-family: var(--font-headline);
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-header p {
+            opacity: 0.9;
+        }
+
+        .welcome-body {
+            padding: 2rem;
+        }
+
+        .claim-summary {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .claim-summary h3 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .claim-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .incident-description {
+            margin-bottom: 1.5rem;
+        }
+
+        .incident-description h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .incident-description p {
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        /* Processing Dashboard */
+        .dashboard {
+            display: none;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 1.5rem;
+        }
+
+        /* Agent Panel */
+        .agent-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .panel-title {
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .agent-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .agent-item.active {
+            background: rgba(120, 190, 32, 0.1);
+            border-left: 3px solid var(--geico-green);
+        }
+
+        .agent-item.complete {
+            background: rgba(0, 102, 204, 0.1);
+            border-left: 3px solid var(--geico-bright-blue);
+        }
+
+        .agent-item.flagged {
+            background: rgba(255, 107, 0, 0.1);
+            border-left: 3px solid var(--geico-orange);
+        }
+
+        .agent-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--geico-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .agent-info {
+            flex: 1;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .agent-status {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-active { color: var(--status-active); }
+        .status-complete { color: var(--status-complete); }
+        .status-flagged { color: var(--status-flagged); }
+        .status-idle { color: var(--status-idle); }
+
+        /* Orchestrator Visualization */
+        .orchestrator-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .orchestrator-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .orbit-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 20px;
+        }
+
+        .central-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background: var(--geico-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-family: var(--font-headline);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.2;
+            box-shadow: 0 0 30px rgba(0, 61, 122, 0.4);
+            z-index: 10;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(0, 61, 122, 0.2);
+            border-radius: 50%;
+        }
+
+        .orbit-ring-1 { width: 200px; height: 200px; }
+        .orbit-ring-2 { width: 300px; height: 300px; }
+
+        .orbit-agent {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            background: var(--light-gray);
+            border: 3px solid var(--medium-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            font-family: var(--font-headline);
+            color: var(--dark-gray);
+            transition: all 0.5s ease;
+        }
+
+        .orbit-agent.active {
+            background: var(--geico-green);
+            border-color: var(--geico-green);
+            color: var(--white);
+            box-shadow: 0 0 15px rgba(120, 190, 32, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+
+        .orbit-agent.complete {
+            background: var(--geico-bright-blue);
+            border-color: var(--geico-bright-blue);
+            color: var(--white);
+        }
+
+        .orbit-agent.flagged {
+            background: var(--geico-orange);
+            border-color: var(--geico-orange);
+            color: var(--white);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(120, 190, 32, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(120, 190, 32, 0.8); }
+        }
+
+        /* Position orbit agents in a circle */
+        #orbit-1 { top: 10px; left: 50%; margin-left: -22px; }
+        #orbit-2 { top: 65px; right: 10px; }
+        #orbit-3 { bottom: 65px; right: 10px; }
+        #orbit-4 { bottom: 10px; left: 50%; margin-left: -22px; }
+        #orbit-5 { bottom: 65px; left: 10px; }
+        #orbit-6 { top: 65px; left: 10px; }
+
+        /* Communication Log */
+        .log-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 600px;
+        }
+
+        .log-entries {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .log-entry {
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            border-left: 3px solid var(--geico-bright-blue);
+            animation: slideIn 0.3s ease;
+        }
+
+        .log-entry.flagged {
+            border-left-color: var(--geico-orange);
+            background: rgba(255, 107, 0, 0.05);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-agent {
+            font-weight: 600;
+            color: var(--geico-blue);
+            font-size: 0.85rem;
+        }
+
+        .log-time {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+        }
+
+        .log-message {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            line-height: 1.5;
+        }
+
+        .log-confidence {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--geico-green);
+            color: var(--white);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .log-confidence.medium {
+            background: var(--geico-orange);
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .result-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        /* Confidence Grid */
+        .confidence-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .confidence-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+
+        .confidence-label {
+            font-size: 0.85rem;
+        }
+
+        .confidence-value {
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .confidence-high { background: rgba(120, 190, 32, 0.2); color: var(--geico-green-dark); }
+        .confidence-medium { background: rgba(255, 107, 0, 0.2); color: var(--geico-orange); }
+
+        /* Compliance Grid */
+        .compliance-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .compliance-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .compliance-check {
+            color: var(--geico-green);
+            font-weight: bold;
+        }
+
+        /* Decision Panel */
+        .decision-panel {
+            background: linear-gradient(135deg, var(--geico-navy), var(--geico-blue));
+            color: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .decision-panel h3 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .decision-amount {
+            font-family: var(--font-headline);
+            font-size: 2.5rem;
+            color: var(--geico-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .decision-status {
+            display: inline-block;
+            background: var(--geico-green);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--geico-orange);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .flag-detail {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .flag-detail h4 {
+            color: var(--geico-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        /* Auditability Section */
+        .audit-section {
+            margin-top: 1.5rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .audit-header {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .audit-header h3 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .audit-body {
+            padding: 1.5rem;
+        }
+
+        .audit-intro {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .audit-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--geico-blue);
+        }
+
+        .audit-card h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .audit-card ul {
+            list-style: none;
+            font-size: 0.9rem;
+        }
+
+        .audit-card li {
+            padding: 0.35rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .audit-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--geico-green);
+            font-weight: bold;
+        }
+
+        .audit-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .audit-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--light-gray);
+            border: 2px solid var(--geico-blue);
+            border-radius: 4px;
+            color: var(--geico-blue);
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audit-btn:hover {
+            background: var(--geico-blue);
+            color: var(--white);
+        }
+
+        .audit-btn.primary {
+            background: var(--geico-green);
+            border-color: var(--geico-green);
+            color: var(--white);
+        }
+
+        .audit-btn.primary:hover {
+            background: var(--geico-green-dark);
+            border-color: var(--geico-green-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+
+            .audit-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">GEICO <span>×</span> Claude</div>
+            <div class="claim-badge">
+                Claim: <strong id="claimId">CLM-2024-GK-78432</strong> |
+                Est. Damage: <strong id="estDamage">$7,240</strong>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="timer" id="timer">00:00.0</div>
+            <button class="btn btn-secondary" onclick="resetDemo()">Reset</button>
+            <button class="btn btn-primary" id="actionBtn" onclick="toggleDemo()">Pause</button>
+        </div>
+    </header>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <h1>Claims Intelligence Demo</h1>
+                <p>Multi-Agent AI Processing Powered by Claude</p>
+            </div>
+            <div class="welcome-body">
+                <div class="claim-summary">
+                    <h3>Sample Claim</h3>
+                    <div class="claim-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Policyholder</span>
+                            <span class="detail-value">Michael Chen</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Policy Number</span>
+                            <span class="detail-value">GK-4892-7156-AUTO</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Vehicle</span>
+                            <span class="detail-value">2023 Toyota RAV4</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Coverage</span>
+                            <span class="detail-value">Comprehensive + Collision</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Deductible</span>
+                            <span class="detail-value">$500</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Claim Date</span>
+                            <span class="detail-value">November 23, 2025</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="incident-description">
+                    <h4>Incident Description</h4>
+                    <p>Rear-end collision at intersection of Main St. and Oak Ave. Policyholder was stopped at red light when struck from behind. Damage to rear bumper, trunk lid, and tail lights. No injuries reported. Police report filed. 12 photos submitted via GEICO mobile app.</p>
+                </div>
+
+                <button class="btn btn-primary start-btn" onclick="startDemo()">
+                    Begin AI Claims Processing
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-grid">
+            <!-- Agent Panel -->
+            <div class="agent-panel">
+                <h3 class="panel-title">AI Agent Status</h3>
+                <div class="agent-list">
+                    <div class="agent-item" id="agent-triage">
+                        <div class="agent-icon">1</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Triage Agent</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="agent-item" id="agent-document">
+                        <div class="agent-icon">2</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Document Intelligence</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="agent-item" id="agent-coverage">
+                        <div class="agent-icon">3</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Coverage Verification</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="agent-item" id="agent-fraud">
+                        <div class="agent-icon">4</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Fraud Detection</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="agent-item" id="agent-repair">
+                        <div class="agent-icon">5</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Repair Network</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="agent-item" id="agent-synthesis">
+                        <div class="agent-icon">6</div>
+                        <div class="agent-info">
+                            <div class="agent-name">Decision Synthesis</div>
+                            <div class="agent-status status-idle">IDLE</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orchestrator Visualization -->
+            <div class="orchestrator-panel">
+                <h3 class="panel-title">Agent Orchestration</h3>
+                <div class="orchestrator-visual">
+                    <div class="orbit-container">
+                        <div class="orbit-ring orbit-ring-1"></div>
+                        <div class="orbit-ring orbit-ring-2"></div>
+                        <div class="central-hub">Claims<br>Orchestrator</div>
+                        <div class="orbit-agent" id="orbit-1" title="Triage">T</div>
+                        <div class="orbit-agent" id="orbit-2" title="Document">D</div>
+                        <div class="orbit-agent" id="orbit-3" title="Coverage">C</div>
+                        <div class="orbit-agent" id="orbit-4" title="Fraud">F</div>
+                        <div class="orbit-agent" id="orbit-5" title="Repair">R</div>
+                        <div class="orbit-agent" id="orbit-6" title="Synthesis">S</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Log -->
+            <div class="log-panel">
+                <h3 class="panel-title">Processing Log</h3>
+                <div class="log-entries" id="logEntries">
+                    <!-- Log entries will be added dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <!-- Confidence Scores -->
+            <div class="result-card">
+                <h3>Confidence Scores</h3>
+                <div class="confidence-grid">
+                    <div class="confidence-row">
+                        <span class="confidence-label">Document Analysis</span>
+                        <span class="confidence-value confidence-high">96%</span>
+                    </div>
+                    <div class="confidence-row">
+                        <span class="confidence-label">Coverage Match</span>
+                        <span class="confidence-value confidence-high">98%</span>
+                    </div>
+                    <div class="confidence-row">
+                        <span class="confidence-label">Fraud Risk</span>
+                        <span class="confidence-value confidence-high">Low (12/100)</span>
+                    </div>
+                    <div class="confidence-row">
+                        <span class="confidence-label">Damage Estimate</span>
+                        <span class="confidence-value confidence-high">94%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compliance -->
+            <div class="result-card">
+                <h3>Regulatory Compliance</h3>
+                <div class="compliance-grid">
+                    <div class="compliance-item">
+                        <span class="compliance-check">✓</span>
+                        <span>NAIC Guidelines</span>
+                    </div>
+                    <div class="compliance-item">
+                        <span class="compliance-check">✓</span>
+                        <span>State DOI Requirements</span>
+                    </div>
+                    <div class="compliance-item">
+                        <span class="compliance-check">✓</span>
+                        <span>CCPA/Privacy Standards</span>
+                    </div>
+                    <div class="compliance-item">
+                        <span class="compliance-check">✓</span>
+                        <span>Human Oversight Protocol</span>
+                    </div>
+                    <div class="compliance-item">
+                        <span class="compliance-check">✓</span>
+                        <span>Audit Trail Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decision -->
+            <div class="result-card decision-panel">
+                <h3>Claim Decision</h3>
+                <div class="decision-amount">$6,740</div>
+                <div>After $500 deductible</div>
+                <div class="decision-status">Approved for Payment</div>
+            </div>
+        </div>
+
+        <!-- Auditability & Traceability Section -->
+        <div class="audit-section" id="auditSection" style="display: none;">
+            <div class="audit-header">
+                <h3>Auditability & Regulatory Traceability</h3>
+                <span style="font-size: 0.85rem; opacity: 0.9;">Full Decision Trail Available</span>
+            </div>
+            <div class="audit-body">
+                <p class="audit-intro">
+                    Every AI agent decision is fully traceable and auditable. Regulators, compliance officers, and legal teams can inspect the complete reasoning chain, data sources, and confidence scores for any claim decision. This transparency is built into the core architecture—not bolted on afterward.
+                </p>
+
+                <div class="audit-grid">
+                    <div class="audit-card">
+                        <h4>Decision Lineage</h4>
+                        <ul>
+                            <li>Complete reasoning chain for each agent</li>
+                            <li>Input data sources with timestamps</li>
+                            <li>Model version and configuration used</li>
+                            <li>Confidence scores at each decision point</li>
+                            <li>Human override documentation</li>
+                        </ul>
+                    </div>
+
+                    <div class="audit-card">
+                        <h4>Regulatory Compliance</h4>
+                        <ul>
+                            <li>NAIC Model Audit Rule alignment</li>
+                            <li>State DOI examination readiness</li>
+                            <li>Fair lending & anti-discrimination logs</li>
+                            <li>CCPA/GDPR data handling proof</li>
+                            <li>Market conduct exam documentation</li>
+                        </ul>
+                    </div>
+
+                    <div class="audit-card">
+                        <h4>Export & Review</h4>
+                        <ul>
+                            <li>One-click audit package generation</li>
+                            <li>JSON, PDF, and CSV export formats</li>
+                            <li>Regulator-ready summary reports</li>
+                            <li>Legal discovery support</li>
+                            <li>API access for compliance systems</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="audit-actions">
+                    <button class="audit-btn primary" onclick="exportAuditTrail()">
+                        Export Full Audit Trail
+                    </button>
+                    <button class="audit-btn" onclick="viewDecisionTree()">
+                        View Decision Tree
+                    </button>
+                    <button class="audit-btn" onclick="generateRegReport()">
+                        Generate Regulator Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flag Modal -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Review Required</h2>
+            </div>
+            <div class="modal-body">
+                <div class="flag-detail">
+                    <h4>Fraud Detection Notice</h4>
+                    <p>The fraud detection agent identified a data point requiring human review: The policyholder filed a minor claim 14 months ago for windshield damage.</p>
+                </div>
+                <div class="flag-detail">
+                    <h4>Risk Assessment</h4>
+                    <p><strong>Risk Score:</strong> 12/100 (Very Low)<br>
+                    <strong>Recommendation:</strong> Proceed with approval. Prior claim was unrelated incident with no suspicious patterns.</p>
+                </div>
+                <div class="flag-detail">
+                    <h4>Supporting Evidence</h4>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Police report validates incident</li>
+                        <li>Photo timestamps consistent with reported time</li>
+                        <li>No pattern matching known fraud indicators</li>
+                        <li>Customer history: 8 years, no issues</li>
+                    </ul>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Request More Info</button>
+                    <button class="btn btn-primary" onclick="approveAndClose()">Approve Claim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let isPaused = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+        let currentStep = 0;
+
+        const steps = [
+            { time: 800, agent: 'triage', orbit: 1, status: 'active', log: { agent: 'Triage Agent', message: 'Initiating claim classification. Analyzing incident type, severity indicators, and routing requirements.', confidence: null }},
+            { time: 1500, agent: 'triage', orbit: 1, status: 'complete', log: { agent: 'Triage Agent', message: 'Classification complete: COLLISION - REAR IMPACT. Priority: Standard. Routing to parallel processing pipeline.', confidence: '98%' }},
+            { time: 2000, agent: 'document', orbit: 2, status: 'active', log: { agent: 'Document Intelligence', message: 'Processing 12 submitted photos. Running damage detection models and OCR on police report.', confidence: null }},
+            { time: 2200, agent: 'coverage', orbit: 3, status: 'active', log: { agent: 'Coverage Verification', message: 'Retrieving policy GK-4892-7156-AUTO. Validating coverage terms and deductible.', confidence: null }},
+            { time: 3500, agent: 'coverage', orbit: 3, status: 'complete', log: { agent: 'Coverage Verification', message: 'Policy active. Collision coverage confirmed. $500 deductible applies. Coverage limit: $50,000.', confidence: '98%' }},
+            { time: 4200, agent: 'document', orbit: 2, status: 'complete', log: { agent: 'Document Intelligence', message: 'Analysis complete. Identified damage: rear bumper (major), trunk lid (moderate), tail light assembly (replacement needed). Estimated repair: $7,100-$7,400.', confidence: '96%' }},
+            { time: 4800, agent: 'fraud', orbit: 4, status: 'active', log: { agent: 'Fraud Detection', message: 'Scanning claim against 3.2M historical patterns. Analyzing timing, damage consistency, and policyholder history.', confidence: null }},
+            { time: 6000, agent: 'fraud', orbit: 4, status: 'flagged', log: { agent: 'Fraud Detection', message: 'Note: Prior claim detected (14 months ago, windshield). Cross-referencing patterns...', confidence: null, flagged: true }},
+            { time: 7200, agent: 'fraud', orbit: 4, status: 'complete', log: { agent: 'Fraud Detection', message: 'Risk assessment complete. Score: 12/100 (Very Low). Prior claim unrelated. No fraud indicators detected. Recommending approval with notation.', confidence: '94%' }},
+            { time: 7800, agent: 'repair', orbit: 5, status: 'active', log: { agent: 'Repair Network', message: 'Identifying GEICO Auto Repair Xpress locations within 15 miles of policyholder.', confidence: null }},
+            { time: 9000, agent: 'repair', orbit: 5, status: 'complete', log: { agent: 'Repair Network', message: 'Found 4 network shops. Top recommendation: Premium Auto Body (4.8 rating, 2.3 miles, 3-day estimate). Guarantee applies.', confidence: '97%' }},
+            { time: 9500, agent: 'synthesis', orbit: 6, status: 'active', log: { agent: 'Decision Synthesis', message: 'Aggregating agent findings. Preparing claim decision package and adjuster briefing.', confidence: null }},
+            { time: 11000, agent: 'synthesis', orbit: 6, status: 'complete', log: { agent: 'Decision Synthesis', message: 'Synthesis complete. All validations passed. Recommended payout: $6,740 (after $500 deductible). Flagging for human review due to prior claim notation.', confidence: '96%' }},
+            { time: 12000, action: 'showModal' },
+        ];
+
+        function startDemo() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            isRunning = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+            processSteps();
+        }
+
+        function updateTimer() {
+            if (!isPaused) {
+                elapsedTime = Date.now() - startTime;
+                const seconds = Math.floor(elapsedTime / 1000);
+                const tenths = Math.floor((elapsedTime % 1000) / 100);
+                document.getElementById('timer').textContent =
+                    `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}.${tenths}`;
+            }
+        }
+
+        function processSteps() {
+            if (currentStep >= steps.length || !isRunning) return;
+
+            const step = steps[currentStep];
+
+            setTimeout(() => {
+                if (isPaused) {
+                    // Wait and retry
+                    setTimeout(() => processSteps(), 100);
+                    return;
+                }
+
+                if (step.action === 'showModal') {
+                    document.getElementById('flagModal').classList.add('active');
+                } else {
+                    // Update agent status
+                    if (step.agent) {
+                        updateAgentStatus(step.agent, step.status);
+                    }
+                    if (step.orbit) {
+                        updateOrbitAgent(step.orbit, step.status);
+                    }
+                    if (step.log) {
+                        addLogEntry(step.log);
+                    }
+                }
+
+                currentStep++;
+                processSteps();
+            }, currentStep === 0 ? step.time : step.time - steps[currentStep - 1].time);
+        }
+
+        function updateAgentStatus(agentId, status) {
+            const agent = document.getElementById(`agent-${agentId}`);
+            agent.className = `agent-item ${status}`;
+            const statusEl = agent.querySelector('.agent-status');
+            statusEl.textContent = status.toUpperCase();
+            statusEl.className = `agent-status status-${status}`;
+        }
+
+        function updateOrbitAgent(orbitNum, status) {
+            const orbit = document.getElementById(`orbit-${orbitNum}`);
+            orbit.className = `orbit-agent ${status}`;
+        }
+
+        function addLogEntry(log) {
+            const entries = document.getElementById('logEntries');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${log.flagged ? 'flagged' : ''}`;
+
+            const time = document.getElementById('timer').textContent;
+
+            entry.innerHTML = `
+                <div class="log-header">
+                    <span class="log-agent">${log.agent}</span>
+                    <span class="log-time">${time}</span>
+                </div>
+                <div class="log-message">${log.message}</div>
+                ${log.confidence ? `<span class="log-confidence ${log.flagged ? 'medium' : ''}">${log.confidence} confidence</span>` : ''}
+            `;
+
+            entries.appendChild(entry);
+            entries.scrollTop = entries.scrollHeight;
+        }
+
+        function toggleDemo() {
+            isPaused = !isPaused;
+            document.getElementById('actionBtn').textContent = isPaused ? 'Resume' : 'Pause';
+            if (!isPaused) {
+                startTime = Date.now() - elapsedTime;
+            }
+        }
+
+        function resetDemo() {
+            isRunning = false;
+            isPaused = false;
+            currentStep = 0;
+            elapsedTime = 0;
+            clearInterval(timerInterval);
+
+            document.getElementById('timer').textContent = '00:00.0';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('auditSection').style.display = 'none';
+            document.getElementById('flagModal').classList.remove('active');
+            document.getElementById('logEntries').innerHTML = '';
+            document.getElementById('actionBtn').textContent = 'Pause';
+
+            // Reset all agents
+            document.querySelectorAll('.agent-item').forEach(el => {
+                el.className = 'agent-item';
+                el.querySelector('.agent-status').textContent = 'IDLE';
+                el.querySelector('.agent-status').className = 'agent-status status-idle';
+            });
+
+            document.querySelectorAll('.orbit-agent').forEach(el => {
+                el.className = 'orbit-agent';
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('flagModal').classList.remove('active');
+        }
+
+        function approveAndClose() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.getElementById('resultsSection').style.display = 'grid';
+            document.getElementById('auditSection').style.display = 'block';
+
+            addLogEntry({
+                agent: 'Human Adjuster',
+                message: 'Claim reviewed and approved. Prior claim notation acknowledged - no impact on current claim validity. Authorizing payment of $6,740.',
+                confidence: 'APPROVED'
+            });
+
+            addLogEntry({
+                agent: 'Audit System',
+                message: 'Complete decision trail captured. 47 data points logged. Audit package ready for export. Regulatory compliance verified.',
+                confidence: '100%'
+            });
+
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function exportAuditTrail() {
+            const auditData = {
+                claimId: 'CLM-2024-GK-78432',
+                timestamp: new Date().toISOString(),
+                processingTime: document.getElementById('timer').textContent,
+                decision: 'APPROVED',
+                payoutAmount: 6740,
+                deductible: 500,
+                agents: [
+                    { name: 'Triage Agent', status: 'complete', confidence: 0.98 },
+                    { name: 'Document Intelligence', status: 'complete', confidence: 0.96 },
+                    { name: 'Coverage Verification', status: 'complete', confidence: 0.98 },
+                    { name: 'Fraud Detection', status: 'complete', confidence: 0.94, flags: ['prior_claim_14mo'] },
+                    { name: 'Repair Network', status: 'complete', confidence: 0.97 },
+                    { name: 'Decision Synthesis', status: 'complete', confidence: 0.96 }
+                ],
+                compliance: {
+                    NAIC: true,
+                    stateDOI: true,
+                    CCPA: true,
+                    humanOversight: true,
+                    auditTrail: true
+                },
+                humanReview: {
+                    required: true,
+                    reason: 'Prior claim notation',
+                    reviewer: 'Human Adjuster',
+                    decision: 'Approved',
+                    notes: 'Prior claim unrelated - windshield damage 14 months ago'
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `audit-trail-${auditData.claimId}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            alert('Audit trail exported successfully!');
+        }
+
+        function viewDecisionTree() {
+            alert('Decision Tree Viewer\n\n' +
+                '1. Triage Agent → Classified as COLLISION\n' +
+                '   └── 2. Document Intelligence → Analyzed 12 photos\n' +
+                '   └── 3. Coverage Verification → Policy confirmed\n' +
+                '       └── 4. Fraud Detection → Low risk (12/100)\n' +
+                '           └── FLAG: Prior claim detected\n' +
+                '       └── 5. Repair Network → 4 shops identified\n' +
+                '           └── 6. Decision Synthesis → Recommend approval\n' +
+                '               └── HUMAN REVIEW → Approved\n\n' +
+                'All decision points logged with timestamps and confidence scores.');
+        }
+
+        function generateRegReport() {
+            alert('Regulator Report Generated\n\n' +
+                'Report includes:\n' +
+                '• Executive summary\n' +
+                '• AI model governance documentation\n' +
+                '• Decision reasoning for each agent\n' +
+                '• Human oversight verification\n' +
+                '• Fair lending compliance attestation\n' +
+                '• Data privacy handling proof\n\n' +
+                'Report ready for State DOI examination.');
+        }
+    </script>
+</body>
+</html>

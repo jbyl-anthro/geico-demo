@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEICO Underwriting Intelligence Demo | Powered by Claude</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --geico-blue: #003D7A;
+            --geico-navy: #002B5C;
+            --geico-bright-blue: #0066CC;
+            --geico-green: #78BE20;
+            --geico-green-dark: #5FA015;
+            --geico-orange: #FF6B00;
+            --geico-yellow: #FFD100;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+            --status-active: #78BE20;
+            --status-complete: #0066CC;
+            --status-flagged: #FF6B00;
+            --status-idle: #999999;
+            --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
+            --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 2rem; }
+
+        .logo {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .logo span { color: var(--geico-green); }
+
+        .app-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .app-badge strong { color: var(--geico-green); }
+
+        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+
+        .timer {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            color: var(--geico-green);
+        }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            border: none;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: var(--geico-green); color: var(--white); }
+        .btn-primary:hover { background: var(--geico-green-dark); }
+        .btn-secondary { background: transparent; color: var(--white); border: 2px solid var(--white); }
+        .btn-secondary:hover { background: var(--white); color: var(--geico-navy); }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+            padding: 2rem;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .welcome-header {
+            background: linear-gradient(135deg, var(--geico-blue), var(--geico-bright-blue));
+            color: var(--white);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .welcome-header h1 {
+            font-family: var(--font-headline);
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-body { padding: 2rem; }
+
+        .applicant-profile {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .applicant-photo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--geico-bright-blue), var(--geico-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .applicant-info { flex: 1; }
+
+        .applicant-name {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .applicant-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item { display: flex; flex-direction: column; }
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .detail-value { font-weight: 600; color: var(--dark-gray); }
+
+        .vehicle-info {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-info h3 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .coverage-request {
+            background: rgba(0, 102, 204, 0.1);
+            border: 2px solid var(--geico-bright-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .coverage-request h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-bright-blue);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .start-btn { width: 100%; padding: 1rem; font-size: 1.1rem; }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .dashboard.active { display: block; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 1.5rem;
+        }
+
+        /* Data Sources Panel */
+        .sources-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .panel-title {
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .source-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+        .source-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .source-item.active {
+            background: rgba(120, 190, 32, 0.1);
+            border-left-color: var(--geico-green);
+        }
+        .source-item.complete {
+            background: rgba(0, 102, 204, 0.1);
+            border-left-color: var(--geico-bright-blue);
+        }
+        .source-item.warning {
+            background: rgba(255, 107, 0, 0.1);
+            border-left-color: var(--geico-orange);
+        }
+
+        .source-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--geico-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .source-info { flex: 1; }
+        .source-name { font-weight: 600; font-size: 0.9rem; color: var(--dark-gray); }
+        .source-status { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .status-active { color: var(--status-active); }
+        .status-complete { color: var(--status-complete); }
+        .status-warning { color: var(--status-flagged); }
+        .status-idle { color: var(--status-idle); }
+
+        /* Risk Assessment Panel */
+        .assessment-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .risk-gauge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 220px;
+            height: 120px;
+        }
+
+        .gauge-bg {
+            width: 220px;
+            height: 110px;
+            border-radius: 110px 110px 0 0;
+            background: linear-gradient(90deg,
+                var(--geico-green) 0%,
+                var(--geico-yellow) 50%,
+                var(--geico-orange) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gauge-mask {
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            right: 10px;
+            height: 90px;
+            background: var(--white);
+            border-radius: 90px 90px 0 0;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            width: 4px;
+            height: 80px;
+            background: var(--geico-navy);
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(-60deg);
+            transition: transform 1s ease-out;
+            border-radius: 2px;
+        }
+
+        .gauge-center {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--geico-navy);
+            border-radius: 50%;
+        }
+
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .gauge-labels span:first-child { color: var(--geico-green); }
+        .gauge-labels span:last-child { color: var(--geico-orange); }
+
+        .risk-score-display {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .risk-tier {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+        }
+
+        .risk-score {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--geico-green);
+            line-height: 1;
+        }
+
+        .risk-score.medium { color: var(--geico-yellow); }
+        .risk-score.high { color: var(--geico-orange); }
+
+        /* Risk Factors */
+        .risk-factors {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .risk-factors h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .factor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .factor-name { font-size: 0.9rem; }
+
+        .factor-impact {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        .factor-positive { background: rgba(120, 190, 32, 0.2); color: var(--geico-green-dark); }
+        .factor-neutral { background: rgba(0, 102, 204, 0.2); color: var(--geico-bright-blue); }
+        .factor-negative { background: rgba(255, 107, 0, 0.2); color: var(--geico-orange); }
+
+        /* Log Panel */
+        .log-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 600px;
+        }
+
+        .log-entries {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .log-entry {
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            border-left: 3px solid var(--geico-bright-blue);
+            animation: slideIn 0.3s ease;
+        }
+
+        .log-entry.warning {
+            border-left-color: var(--geico-orange);
+            background: rgba(255, 107, 0, 0.05);
+        }
+
+        .log-entry.success {
+            border-left-color: var(--geico-green);
+            background: rgba(120, 190, 32, 0.05);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-source { font-weight: 600; color: var(--geico-blue); font-size: 0.85rem; }
+        .log-time { font-size: 0.75rem; color: var(--medium-gray); }
+        .log-message { font-size: 0.85rem; color: var(--dark-gray); line-height: 1.5; }
+
+        .log-data {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--geico-bright-blue);
+            color: var(--white);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Quote Section */
+        .quote-section {
+            margin-top: 1.5rem;
+            display: none;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .quote-section.active { display: grid; }
+
+        .quote-breakdown {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+        }
+
+        .quote-breakdown h3 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .premium-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .premium-line.total {
+            border-bottom: none;
+            border-top: 2px solid var(--geico-blue);
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .premium-line.total .premium-amount { color: var(--geico-green); }
+
+        .quote-decision {
+            background: linear-gradient(135deg, var(--geico-navy), var(--geico-blue));
+            color: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .quote-decision h3 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .monthly-premium {
+            font-family: var(--font-headline);
+            font-size: 3rem;
+            color: var(--geico-green);
+        }
+
+        .monthly-label { opacity: 0.9; margin-bottom: 1rem; }
+
+        .decision-badge {
+            display: inline-block;
+            background: var(--geico-green);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .decision-badge.review {
+            background: var(--geico-orange);
+        }
+
+        /* Audit Section */
+        .audit-section {
+            margin-top: 1.5rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: none;
+        }
+
+        .audit-section.active { display: block; }
+
+        .audit-header {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .audit-header h3 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+
+        .audit-body { padding: 1.5rem; }
+
+        .audit-intro {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .audit-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--geico-blue);
+        }
+
+        .audit-card h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .audit-card ul { list-style: none; font-size: 0.9rem; }
+        .audit-card li {
+            padding: 0.35rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+        .audit-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--geico-green);
+            font-weight: bold;
+        }
+
+        .audit-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .audit-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--light-gray);
+            border: 2px solid var(--geico-blue);
+            border-radius: 4px;
+            color: var(--geico-blue);
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audit-btn:hover { background: var(--geico-blue); color: var(--white); }
+        .audit-btn.primary {
+            background: var(--geico-green);
+            border-color: var(--geico-green);
+            color: var(--white);
+        }
+        .audit-btn.primary:hover { background: var(--geico-green-dark); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--geico-orange);
+            color: var(--white);
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-header h2 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+        }
+
+        .modal-body { padding: 1.5rem; }
+
+        .flag-detail {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .flag-detail h4 {
+            color: var(--geico-orange);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+        }
+
+        .recommendation-box {
+            background: rgba(120, 190, 32, 0.1);
+            border: 2px solid var(--geico-green);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .recommendation-box h4 {
+            color: var(--geico-green-dark);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-actions .btn { flex: 1; padding: 0.75rem; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .quote-section { grid-template-columns: 1fr; }
+            .audit-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">GEICO <span>×</span> Claude</div>
+            <div class="app-badge">
+                Application: <strong id="appId">APP-2024-GK-29471</strong> |
+                Type: <strong>New Auto Policy</strong>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="timer" id="timer">00:00.0</div>
+            <button class="btn btn-secondary" onclick="resetDemo()">Reset</button>
+            <button class="btn btn-primary" id="actionBtn" onclick="toggleDemo()">Pause</button>
+        </div>
+    </header>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <h1>Underwriting Intelligence Demo</h1>
+                <p>AI-Powered Risk Assessment & Quote Generation</p>
+            </div>
+            <div class="welcome-body">
+                <div class="applicant-profile">
+                    <div class="applicant-photo">JW</div>
+                    <div class="applicant-info">
+                        <div class="applicant-name">Jennifer Walsh</div>
+                        <div style="color: var(--medium-gray);">New Auto Insurance Applicant</div>
+                        <div class="applicant-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Age</span>
+                                <span class="detail-value">28 years old</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">Arlington, VA 22201</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Occupation</span>
+                                <span class="detail-value">Marketing Manager</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Years Licensed</span>
+                                <span class="detail-value">10 years</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vehicle-info">
+                    <h3>Vehicle Information</h3>
+                    <div class="vehicle-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Vehicle</span>
+                            <span class="detail-value">2024 Honda Accord EX</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">VIN</span>
+                            <span class="detail-value">1HGCV1F34RA0****</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Annual Mileage</span>
+                            <span class="detail-value">12,000 miles</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Primary Use</span>
+                            <span class="detail-value">Commute to Work</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Garaging</span>
+                            <span class="detail-value">Private Garage</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Safety Features</span>
+                            <span class="detail-value">Full ADAS Suite</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="coverage-request">
+                    <h4>Requested Coverage</h4>
+                    <p>100/300/100 Liability | $500 Comprehensive | $500 Collision | Uninsured Motorist | Roadside Assistance</p>
+                </div>
+
+                <button class="btn btn-primary start-btn" onclick="startDemo()">
+                    Begin Underwriting Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-grid">
+            <!-- Data Sources Panel -->
+            <div class="sources-panel">
+                <h3 class="panel-title">Data Sources</h3>
+                <div class="source-list">
+                    <div class="source-item" id="source-mvr">
+                        <div class="source-icon">🚗</div>
+                        <div class="source-info">
+                            <div class="source-name">Motor Vehicle Report</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-lexis">
+                        <div class="source-icon">🔍</div>
+                        <div class="source-info">
+                            <div class="source-name">LexisNexis</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-credit">
+                        <div class="source-icon">💳</div>
+                        <div class="source-info">
+                            <div class="source-name">Credit-Based Score</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-clue">
+                        <div class="source-icon">📋</div>
+                        <div class="source-info">
+                            <div class="source-name">CLUE Report</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-verisk">
+                        <div class="source-icon">📊</div>
+                        <div class="source-info">
+                            <div class="source-name">Verisk Analytics</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-vehicle">
+                        <div class="source-icon">🚙</div>
+                        <div class="source-info">
+                            <div class="source-name">Vehicle Data (VIN)</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                    <div class="source-item" id="source-geo">
+                        <div class="source-icon">📍</div>
+                        <div class="source-info">
+                            <div class="source-name">Geo-Risk Analysis</div>
+                            <div class="source-status status-idle">PENDING</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Assessment Panel -->
+            <div class="assessment-panel">
+                <h3 class="panel-title">Risk Assessment Engine</h3>
+                <div class="risk-gauge">
+                    <div class="gauge-container">
+                        <div class="gauge-bg">
+                            <div class="gauge-mask"></div>
+                        </div>
+                        <div class="gauge-needle" id="gaugeNeedle"></div>
+                        <div class="gauge-center"></div>
+                        <div class="gauge-labels">
+                            <span>LOW RISK</span>
+                            <span>HIGH RISK</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="risk-score-display">
+                    <div class="risk-tier" id="riskTier">Calculating...</div>
+                    <div class="risk-score" id="riskScore">--</div>
+                </div>
+
+                <div class="risk-factors" id="riskFactors" style="display: none;">
+                    <h4>Contributing Factors</h4>
+                    <div id="factorsList"></div>
+                </div>
+            </div>
+
+            <!-- Processing Log -->
+            <div class="log-panel">
+                <h3 class="panel-title">Underwriting Log</h3>
+                <div class="log-entries" id="logEntries"></div>
+            </div>
+        </div>
+
+        <!-- Quote Section -->
+        <div class="quote-section" id="quoteSection">
+            <div class="quote-breakdown">
+                <h3>Premium Breakdown</h3>
+                <div class="premium-line">
+                    <span>Bodily Injury Liability (100/300)</span>
+                    <span class="premium-amount">$312.00</span>
+                </div>
+                <div class="premium-line">
+                    <span>Property Damage Liability (100K)</span>
+                    <span class="premium-amount">$186.00</span>
+                </div>
+                <div class="premium-line">
+                    <span>Comprehensive ($500 ded)</span>
+                    <span class="premium-amount">$142.00</span>
+                </div>
+                <div class="premium-line">
+                    <span>Collision ($500 ded)</span>
+                    <span class="premium-amount">$298.00</span>
+                </div>
+                <div class="premium-line">
+                    <span>Uninsured Motorist</span>
+                    <span class="premium-amount">$89.00</span>
+                </div>
+                <div class="premium-line">
+                    <span>Roadside Assistance</span>
+                    <span class="premium-amount">$18.00</span>
+                </div>
+                <div class="premium-line">
+                    <span style="color: var(--geico-green);">Safe Driver Discount (-15%)</span>
+                    <span class="premium-amount" style="color: var(--geico-green);">-$156.75</span>
+                </div>
+                <div class="premium-line">
+                    <span style="color: var(--geico-green);">Multi-Policy Bundle (-8%)</span>
+                    <span class="premium-amount" style="color: var(--geico-green);">-$71.06</span>
+                </div>
+                <div class="premium-line total">
+                    <span>6-Month Premium</span>
+                    <span class="premium-amount">$817.19</span>
+                </div>
+            </div>
+            <div class="quote-decision">
+                <h3>Underwriting Decision</h3>
+                <div class="monthly-premium">$136.20</div>
+                <div class="monthly-label">per month</div>
+                <div class="decision-badge" id="decisionBadge">Approved - Preferred Tier</div>
+            </div>
+        </div>
+
+        <!-- Audit Section -->
+        <div class="audit-section" id="auditSection">
+            <div class="audit-header">
+                <h3>Underwriting Audit Trail</h3>
+                <span style="font-size: 0.85rem; opacity: 0.9;">Regulator-Ready Documentation</span>
+            </div>
+            <div class="audit-body">
+                <p class="audit-intro">
+                    Complete underwriting decision trail with full transparency into data sources, risk calculations, and rating factors. Every element of this quote is documented and explainable for regulatory examination and fair lending compliance.
+                </p>
+                <div class="audit-grid">
+                    <div class="audit-card">
+                        <h4>Data Lineage</h4>
+                        <ul>
+                            <li>7 verified data sources queried</li>
+                            <li>All API responses timestamped</li>
+                            <li>Data freshness validated</li>
+                            <li>Consumer consent documented</li>
+                            <li>FCRA compliance verified</li>
+                        </ul>
+                    </div>
+                    <div class="audit-card">
+                        <h4>Rating Transparency</h4>
+                        <ul>
+                            <li>Each factor's impact documented</li>
+                            <li>Actuarial basis for all rates</li>
+                            <li>Discount eligibility explained</li>
+                            <li>Tier placement rationale</li>
+                            <li>Adverse action tracking</li>
+                        </ul>
+                    </div>
+                    <div class="audit-card">
+                        <h4>Compliance Verification</h4>
+                        <ul>
+                            <li>State rate filing alignment</li>
+                            <li>Anti-discrimination analysis</li>
+                            <li>Protected class monitoring</li>
+                            <li>Fair lending attestation</li>
+                            <li>DOI examination ready</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="audit-actions">
+                    <button class="audit-btn primary" onclick="exportAudit()">Export Audit Package</button>
+                    <button class="audit-btn" onclick="viewRatingFactors()">View All Rating Factors</button>
+                    <button class="audit-btn" onclick="generateDisclosure()">Generate Disclosures</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Underwriter Review Required</h2>
+            </div>
+            <div class="modal-body">
+                <div class="flag-detail">
+                    <h4>Flagged Item: Prior Incident</h4>
+                    <p>The MVR report indicates a DUI conviction from <strong>4 years and 2 months ago</strong> (August 2020). This exceeds our standard 3-year lookback but falls within the 5-year extended review period.</p>
+                </div>
+                <div class="flag-detail">
+                    <h4>AI Risk Assessment</h4>
+                    <p><strong>Incident Details:</strong> Single DUI offense, no accident involved, completed court-mandated program, license fully reinstated.</p>
+                    <p><strong>Subsequent Record:</strong> Clean driving record for 4+ years with no violations or claims.</p>
+                    <p><strong>Risk Score Impact:</strong> +18 points added to base score (within acceptable range for Standard tier)</p>
+                </div>
+                <div class="recommendation-box">
+                    <h4>AI Recommendation: Approve with Standard Tier</h4>
+                    <p>Based on the time elapsed (4+ years), clean subsequent record, and completion of rehabilitation program, recommend approval at <strong>Standard tier</strong> rather than Preferred. Premium adjustment of +12% applied. Re-evaluate for Preferred tier at policy renewal if clean record continues.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="declineRisk()">Decline Risk</button>
+                    <button class="btn btn-primary" onclick="approveStandard()">Approve - Standard Tier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let isPaused = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+        let currentStep = 0;
+
+        const steps = [
+            { time: 500, source: 'mvr', status: 'active', log: { source: 'MVR Agent', message: 'Querying Virginia DMV for driving record...', type: 'info' }},
+            { time: 1000, source: 'lexis', status: 'active', log: { source: 'LexisNexis Agent', message: 'Initiating identity verification and prior insurance check...', type: 'info' }},
+            { time: 1500, source: 'credit', status: 'active', log: { source: 'Credit Score Agent', message: 'Retrieving insurance-based credit score (soft pull)...', type: 'info' }},
+            { time: 2200, source: 'lexis', status: 'complete', log: { source: 'LexisNexis Agent', message: 'Identity verified. Prior insurance: Continuous coverage 6+ years with Progressive. No gaps detected.', type: 'success', data: 'Prior Carrier: Progressive | Years: 6.2' }},
+            { time: 2800, source: 'credit', status: 'complete', log: { source: 'Credit Score Agent', message: 'Insurance score retrieved. Excellent credit tier - qualifies for best rates.', type: 'success', data: 'Insurance Score: 776 (Excellent)' }},
+            { time: 3200, source: 'mvr', status: 'warning', log: { source: 'MVR Agent', message: 'Driving record retrieved. FLAG: DUI conviction found from August 2020 (4 years 2 months ago). No other violations.', type: 'warning', data: 'Violations: 1 | At-Fault Accidents: 0' }},
+            { time: 3600, source: 'clue', status: 'active', log: { source: 'CLUE Agent', message: 'Pulling Comprehensive Loss Underwriting Exchange report...', type: 'info' }},
+            { time: 4000, source: 'verisk', status: 'active', log: { source: 'Verisk Agent', message: 'Analyzing loss history and predictive risk indicators...', type: 'info' }},
+            { time: 4500, source: 'clue', status: 'complete', log: { source: 'CLUE Agent', message: 'No claims filed in past 7 years. Clean loss history confirmed.', type: 'success', data: 'Claims: 0 | Loss-Free Years: 7+' }},
+            { time: 5000, source: 'verisk', status: 'complete', log: { source: 'Verisk Agent', message: 'Risk analysis complete. Low predicted loss ratio based on demographic and behavioral factors.', type: 'success', data: 'Predicted Loss Ratio: 0.62' }},
+            { time: 5400, source: 'vehicle', status: 'active', log: { source: 'Vehicle Data Agent', message: 'Decoding VIN and retrieving vehicle specifications...', type: 'info' }},
+            { time: 5800, source: 'geo', status: 'active', log: { source: 'Geo-Risk Agent', message: 'Analyzing ZIP code 22201 for territorial risk factors...', type: 'info' }},
+            { time: 6300, source: 'vehicle', status: 'complete', log: { source: 'Vehicle Data Agent', message: '2024 Honda Accord EX confirmed. IIHS Top Safety Pick+. Anti-theft: Excellent. Repair costs: Low-Medium.', type: 'success', data: 'Safety Rating: 5-Star | Symbol: 12' }},
+            { time: 6800, source: 'geo', status: 'complete', log: { source: 'Geo-Risk Agent', message: 'Arlington, VA 22201: Moderate urban density, low crime rate, average traffic congestion. Territory Tier 3 of 7.', type: 'success', data: 'Territory Factor: 1.08' }},
+            { time: 7500, action: 'updateGauge', value: 28, tier: 'Standard Plus' },
+            { time: 8000, action: 'showFactors' },
+            { time: 8500, action: 'showModal' },
+        ];
+
+        const riskFactors = [
+            { name: 'Driving Experience (10 years)', impact: 'positive', label: '-12%' },
+            { name: 'Prior Insurance (6+ years continuous)', impact: 'positive', label: '-8%' },
+            { name: 'Credit Score (776 - Excellent)', impact: 'positive', label: '-15%' },
+            { name: 'Vehicle Safety (IIHS Top Pick+)', impact: 'positive', label: '-7%' },
+            { name: 'Clean Claims History (7+ years)', impact: 'positive', label: '-10%' },
+            { name: 'DUI - 4 Years Ago', impact: 'negative', label: '+18%' },
+            { name: 'Urban Territory (Arlington)', impact: 'neutral', label: '+8%' },
+            { name: 'Annual Mileage (12,000)', impact: 'neutral', label: '+3%' },
+        ];
+
+        function startDemo() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            isRunning = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+            processSteps();
+        }
+
+        function updateTimer() {
+            if (!isPaused) {
+                elapsedTime = Date.now() - startTime;
+                const seconds = Math.floor(elapsedTime / 1000);
+                const tenths = Math.floor((elapsedTime % 1000) / 100);
+                document.getElementById('timer').textContent =
+                    `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}.${tenths}`;
+            }
+        }
+
+        function processSteps() {
+            if (currentStep >= steps.length || !isRunning) return;
+
+            const step = steps[currentStep];
+
+            setTimeout(() => {
+                if (isPaused) {
+                    setTimeout(() => processSteps(), 100);
+                    return;
+                }
+
+                if (step.action === 'updateGauge') {
+                    updateGauge(step.value, step.tier);
+                } else if (step.action === 'showFactors') {
+                    showRiskFactors();
+                } else if (step.action === 'showModal') {
+                    document.getElementById('reviewModal').classList.add('active');
+                } else {
+                    if (step.source) updateSourceStatus(step.source, step.status);
+                    if (step.log) addLogEntry(step.log);
+                }
+
+                currentStep++;
+                processSteps();
+            }, currentStep === 0 ? step.time : step.time - steps[currentStep - 1].time);
+        }
+
+        function updateSourceStatus(sourceId, status) {
+            const source = document.getElementById(`source-${sourceId}`);
+            source.className = `source-item ${status}`;
+            const statusEl = source.querySelector('.source-status');
+            const statusText = status === 'active' ? 'FETCHING...' : status === 'complete' ? 'COMPLETE' : 'REVIEW';
+            statusEl.textContent = statusText;
+            statusEl.className = `source-status status-${status}`;
+        }
+
+        function addLogEntry(log) {
+            const entries = document.getElementById('logEntries');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${log.type === 'warning' ? 'warning' : log.type === 'success' ? 'success' : ''}`;
+
+            const time = document.getElementById('timer').textContent;
+
+            entry.innerHTML = `
+                <div class="log-header">
+                    <span class="log-source">${log.source}</span>
+                    <span class="log-time">${time}</span>
+                </div>
+                <div class="log-message">${log.message}</div>
+                ${log.data ? `<span class="log-data">${log.data}</span>` : ''}
+            `;
+
+            entries.appendChild(entry);
+            entries.scrollTop = entries.scrollHeight;
+        }
+
+        function updateGauge(score, tier) {
+            // Score 0-100, needle goes from -60deg (low) to +60deg (high)
+            const rotation = -60 + (score / 100) * 120;
+            document.getElementById('gaugeNeedle').style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            document.getElementById('riskTier').textContent = tier;
+            document.getElementById('riskScore').textContent = score;
+
+            const scoreEl = document.getElementById('riskScore');
+            if (score <= 30) scoreEl.className = 'risk-score';
+            else if (score <= 60) scoreEl.className = 'risk-score medium';
+            else scoreEl.className = 'risk-score high';
+        }
+
+        function showRiskFactors() {
+            document.getElementById('riskFactors').style.display = 'block';
+            const list = document.getElementById('factorsList');
+            list.innerHTML = riskFactors.map(f => `
+                <div class="factor-item">
+                    <span class="factor-name">${f.name}</span>
+                    <span class="factor-impact factor-${f.impact}">${f.label}</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleDemo() {
+            isPaused = !isPaused;
+            document.getElementById('actionBtn').textContent = isPaused ? 'Resume' : 'Pause';
+            if (!isPaused) startTime = Date.now() - elapsedTime;
+        }
+
+        function resetDemo() {
+            isRunning = false;
+            isPaused = false;
+            currentStep = 0;
+            elapsedTime = 0;
+            clearInterval(timerInterval);
+
+            document.getElementById('timer').textContent = '00:00.0';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('quoteSection').classList.remove('active');
+            document.getElementById('auditSection').classList.remove('active');
+            document.getElementById('reviewModal').classList.remove('active');
+            document.getElementById('logEntries').innerHTML = '';
+            document.getElementById('riskFactors').style.display = 'none';
+            document.getElementById('gaugeNeedle').style.transform = 'translateX(-50%) rotate(-60deg)';
+            document.getElementById('riskTier').textContent = 'Calculating...';
+            document.getElementById('riskScore').textContent = '--';
+            document.getElementById('actionBtn').textContent = 'Pause';
+
+            document.querySelectorAll('.source-item').forEach(el => {
+                el.className = 'source-item';
+                el.querySelector('.source-status').textContent = 'PENDING';
+                el.querySelector('.source-status').className = 'source-status status-idle';
+            });
+        }
+
+        function approveStandard() {
+            document.getElementById('reviewModal').classList.remove('active');
+            document.getElementById('quoteSection').classList.add('active');
+            document.getElementById('auditSection').classList.add('active');
+            document.getElementById('decisionBadge').textContent = 'Approved - Standard Tier';
+            document.getElementById('decisionBadge').classList.remove('review');
+
+            addLogEntry({
+                source: 'Underwriter Decision',
+                message: 'Application approved at Standard tier per underwriter review. DUI from 4+ years ago with clean subsequent record - acceptable risk with tier adjustment.',
+                type: 'success',
+                data: 'Final Tier: Standard | Monthly: $136.20'
+            });
+
+            addLogEntry({
+                source: 'Audit System',
+                message: 'Complete underwriting audit trail captured. 7 data sources verified. Rating factors documented. Compliance checks passed.',
+                type: 'success',
+                data: 'Audit Package Ready'
+            });
+
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function declineRisk() {
+            document.getElementById('reviewModal').classList.remove('active');
+            addLogEntry({
+                source: 'Underwriter Decision',
+                message: 'Application declined per underwriter review. Risk outside acceptable parameters.',
+                type: 'warning',
+                data: 'Status: Declined'
+            });
+            clearInterval(timerInterval);
+            isRunning = false;
+        }
+
+        function exportAudit() {
+            const auditData = {
+                applicationId: 'APP-2024-GK-29471',
+                applicant: 'Jennifer Walsh',
+                timestamp: new Date().toISOString(),
+                decision: 'Approved - Standard Tier',
+                premium: { sixMonth: 817.19, monthly: 136.20 },
+                dataSources: [
+                    { name: 'MVR', status: 'verified', findings: '1 DUI (4 years ago), otherwise clean' },
+                    { name: 'LexisNexis', status: 'verified', findings: '6+ years continuous coverage' },
+                    { name: 'Credit Score', status: 'verified', findings: '776 - Excellent' },
+                    { name: 'CLUE', status: 'verified', findings: '0 claims, 7+ loss-free years' },
+                    { name: 'Verisk', status: 'verified', findings: 'Low predicted loss ratio' },
+                    { name: 'Vehicle Data', status: 'verified', findings: 'IIHS Top Safety Pick+' },
+                    { name: 'Geo-Risk', status: 'verified', findings: 'Territory Tier 3' }
+                ],
+                riskFactors: riskFactors,
+                humanReview: { required: true, reason: 'DUI outside 3-year lookback', decision: 'Approved Standard' },
+                compliance: { FCRA: true, fairLending: true, stateRateFiling: true, antiDiscrimination: true }
+            };
+
+            const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `underwriting-audit-${auditData.applicationId}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Audit package exported successfully!');
+        }
+
+        function viewRatingFactors() {
+            alert('Rating Factor Details\n\n' +
+                riskFactors.map(f => `${f.name}: ${f.label}`).join('\n') +
+                '\n\nAll factors documented per state rate filing requirements.');
+        }
+
+        function generateDisclosure() {
+            alert('Disclosures Generated:\n\n' +
+                '1. Credit Score Disclosure (FCRA compliant)\n' +
+                '2. Insurance Score Notice\n' +
+                '3. Rate Basis Explanation\n' +
+                '4. Consumer Rights Notice\n' +
+                '5. Privacy Policy Acknowledgment\n\n' +
+                'Documents ready for policyholder delivery.');
+        }
+    </script>
+</body>
+</html>

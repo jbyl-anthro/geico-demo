@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent #4: Personalized Customer Engagement | GEICO × Anthropic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --geico-blue: #003D7A;
+            --geico-navy: #002B5C;
+            --geico-bright-blue: #0066CC;
+            --geico-green: #78BE20;
+            --geico-orange: #FF6B00;
+            --geico-yellow: #FFD100;
+            --geico-dark-gray: #333333;
+            --geico-medium-gray: #666666;
+            --geico-light-gray: #F5F5F5;
+            --white: #FFFFFF;
+            --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
+            --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--geico-navy) 0%, var(--geico-blue) 100%);
+            min-height: 100vh;
+            color: var(--geico-dark-gray);
+        }
+
+        .header {
+            background: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--geico-blue);
+        }
+
+        .demo-badge {
+            background: var(--geico-green);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .back-link {
+            color: var(--geico-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: var(--geico-bright-blue);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 2rem auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .welcome-screen h1 {
+            font-family: var(--font-headline);
+            font-size: 2.5rem;
+            color: var(--geico-navy);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .welcome-screen p {
+            color: var(--geico-medium-gray);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .incoming-call {
+            background: linear-gradient(135deg, var(--geico-blue) 0%, var(--geico-navy) 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            color: var(--white);
+            margin: 2rem 0;
+        }
+
+        .call-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .call-pulse {
+            width: 60px;
+            height: 60px;
+            background: var(--geico-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(120, 190, 32, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(120, 190, 32, 0); }
+        }
+
+        .caller-info h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .caller-info p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .customer-snapshot {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .snapshot-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .snapshot-item label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .snapshot-item span {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .start-btn {
+            background: var(--geico-green);
+            color: var(--white);
+            border: none;
+            padding: 1rem 3rem;
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            background: #6aad1b;
+            transform: translateY(-2px);
+        }
+
+        /* Agent Desktop */
+        .agent-desktop {
+            display: none;
+            gap: 1.5rem;
+        }
+
+        .agent-desktop.active {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+        }
+
+        /* Left Panel - Customer Profile */
+        .customer-panel {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .panel-header {
+            background: var(--geico-blue);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-content {
+            padding: 1.5rem;
+        }
+
+        .customer-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--geico-blue), var(--geico-bright-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--white);
+            margin: 0 auto 1rem;
+        }
+
+        .customer-name {
+            font-family: var(--font-headline);
+            font-size: 1.25rem;
+            text-align: center;
+            color: var(--geico-navy);
+            text-transform: uppercase;
+        }
+
+        .customer-since {
+            text-align: center;
+            color: var(--geico-medium-gray);
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .customer-since span {
+            color: var(--geico-green);
+            font-weight: 600;
+        }
+
+        .profile-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-section h4 {
+            font-family: var(--font-headline);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--geico-blue);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--geico-light-gray);
+        }
+
+        .policy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--geico-light-gray);
+        }
+
+        .policy-item:last-child {
+            border-bottom: none;
+        }
+
+        .policy-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .policy-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--geico-light-gray);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .policy-premium {
+            font-weight: 600;
+            color: var(--geico-green);
+        }
+
+        .life-event {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #FFF8E6;
+            border-radius: 8px;
+            border-left: 3px solid var(--geico-orange);
+            margin-bottom: 0.75rem;
+        }
+
+        .life-event-icon {
+            font-size: 1.25rem;
+        }
+
+        .life-event-content h5 {
+            font-size: 0.85rem;
+            color: var(--geico-dark-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .life-event-content p {
+            font-size: 0.75rem;
+            color: var(--geico-medium-gray);
+        }
+
+        /* Center Panel - AI Insights */
+        .insights-panel {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .ai-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--geico-light-gray);
+        }
+
+        .analysis-card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.5s ease;
+        }
+
+        .analysis-card.active {
+            opacity: 1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .analysis-card.complete {
+            opacity: 1;
+            border: 2px solid var(--geico-green);
+        }
+
+        .analysis-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--geico-light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .analysis-card.active .analysis-icon {
+            background: var(--geico-blue);
+            color: var(--white);
+            animation: spin 2s linear infinite;
+        }
+
+        .analysis-card.complete .analysis-icon {
+            background: var(--geico-green);
+            color: var(--white);
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .analysis-card h5 {
+            font-size: 0.75rem;
+            color: var(--geico-dark-gray);
+            text-transform: uppercase;
+        }
+
+        .recommendations-section {
+            padding: 1.5rem;
+        }
+
+        .recommendations-section h3 {
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recommendation-card {
+            background: var(--geico-light-gray);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .recommendation-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .rec-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rec-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .rec-badge.upsell {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .rec-badge.cross-sell {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .rec-badge.retention {
+            background: #FFF3E0;
+            color: #EF6C00;
+        }
+
+        .rec-confidence {
+            font-size: 0.75rem;
+            color: var(--geico-medium-gray);
+        }
+
+        .rec-confidence span {
+            font-weight: 700;
+            color: var(--geico-green);
+        }
+
+        .rec-title {
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            color: var(--geico-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-reason {
+            font-size: 0.85rem;
+            color: var(--geico-medium-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .rec-value {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .value-item {
+            font-size: 0.8rem;
+        }
+
+        .value-item strong {
+            color: var(--geico-green);
+        }
+
+        /* Right Panel - Coaching */
+        .coaching-panel {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .coaching-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .coaching-card {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--geico-green);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.5s ease;
+        }
+
+        .coaching-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .coaching-card h5 {
+            font-family: var(--font-headline);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .coaching-card p {
+            font-size: 0.85rem;
+            color: var(--geico-dark-gray);
+            line-height: 1.5;
+        }
+
+        .coaching-card .talk-track {
+            background: var(--white);
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            font-style: italic;
+            font-size: 0.8rem;
+            color: var(--geico-medium-gray);
+            border-left: 2px solid var(--geico-blue);
+        }
+
+        .sentiment-indicator {
+            background: var(--geico-light-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .sentiment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .sentiment-header h5 {
+            font-family: var(--font-headline);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+        }
+
+        .sentiment-value {
+            font-size: 1.5rem;
+        }
+
+        .sentiment-bar {
+            height: 8px;
+            background: #E0E0E0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sentiment-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F44336, #FFEB3B, var(--geico-green));
+            width: 0%;
+            transition: width 1s ease;
+            border-radius: 4px;
+        }
+
+        .quick-actions {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--geico-light-gray);
+            background: var(--geico-light-gray);
+        }
+
+        .quick-actions h5 {
+            font-family: var(--font-headline);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+            margin-bottom: 0.75rem;
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: var(--geico-green);
+            color: var(--white);
+        }
+
+        .action-btn.secondary {
+            background: var(--white);
+            color: var(--geico-blue);
+            border: 1px solid var(--geico-blue);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            font-family: var(--font-headline);
+            font-size: 2rem;
+            color: var(--white);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-header p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .outcome-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .outcome-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .outcome-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--geico-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+
+        .outcome-card h4 {
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .outcome-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--geico-green);
+            margin-bottom: 0.25rem;
+        }
+
+        .outcome-label {
+            font-size: 0.85rem;
+            color: var(--geico-medium-gray);
+        }
+
+        /* Auditability Section */
+        .audit-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .audit-section h3 {
+            font-family: var(--font-headline);
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            color: var(--geico-navy);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .audit-card {
+            background: var(--geico-light-gray);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .audit-card h4 {
+            font-family: var(--font-headline);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .audit-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.85rem;
+        }
+
+        .audit-item:last-child {
+            border-bottom: none;
+        }
+
+        .audit-item span:last-child {
+            font-weight: 600;
+            color: var(--geico-navy);
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--geico-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">GEICO</div>
+            <span class="demo-badge">Interactive Demo</span>
+        </div>
+        <a href="geico-anthropic-demo.html" class="back-link">
+            ← Back to Overview
+        </a>
+    </header>
+
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <h1>Agent #4: Personalized Customer Engagement</h1>
+            <p>Experience real-time AI-powered coaching that helps sales agents deliver personalized recommendations and increase conversion rates</p>
+
+            <div class="incoming-call">
+                <div class="call-indicator">
+                    <div class="call-pulse">📞</div>
+                    <div class="caller-info">
+                        <h3>Incoming Call: Sarah Mitchell</h3>
+                        <p>Existing Customer • Auto Policy Renewal Inquiry</p>
+                    </div>
+                </div>
+                <div class="customer-snapshot">
+                    <div class="snapshot-item">
+                        <label>Customer Since</label>
+                        <span>2019 (6 Years)</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <label>Current Premium</label>
+                        <span>$1,847/year</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <label>Policies</label>
+                        <span>Auto Only</span>
+                    </div>
+                    <div class="snapshot-item">
+                        <label>Lifetime Value</label>
+                        <span>$11,082</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startDemo()">
+                Answer Call & Start AI Analysis
+            </button>
+        </div>
+
+        <!-- Agent Desktop View -->
+        <div class="agent-desktop" id="agentDesktop">
+            <!-- Left Panel - Customer Profile -->
+            <div class="customer-panel">
+                <div class="panel-header">
+                    👤 Customer Profile
+                </div>
+                <div class="panel-content">
+                    <div class="customer-avatar">SM</div>
+                    <h3 class="customer-name">Sarah Mitchell</h3>
+                    <p class="customer-since">Customer since <span>2019</span> • 6 Years</p>
+
+                    <div class="profile-section">
+                        <h4>Current Policies</h4>
+                        <div class="policy-item">
+                            <div class="policy-type">
+                                <span class="policy-icon">🚗</span>
+                                <span>Auto - 2021 Honda CR-V</span>
+                            </div>
+                            <span class="policy-premium">$1,847/yr</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h4>Driving Profile</h4>
+                        <div class="policy-item">
+                            <span>Annual Mileage</span>
+                            <span>8,200 miles</span>
+                        </div>
+                        <div class="policy-item">
+                            <span>Claims History</span>
+                            <span style="color: var(--geico-green);">0 Claims</span>
+                        </div>
+                        <div class="policy-item">
+                            <span>Driver Score</span>
+                            <span style="color: var(--geico-green);">Excellent (92)</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h4>🔔 Detected Life Events</h4>
+                        <div class="life-event">
+                            <span class="life-event-icon">🏠</span>
+                            <div class="life-event-content">
+                                <h5>Recent Home Purchase</h5>
+                                <p>Closed on property 3 weeks ago • No homeowners policy</p>
+                            </div>
+                        </div>
+                        <div class="life-event">
+                            <span class="life-event-icon">💍</span>
+                            <div class="life-event-content">
+                                <h5>Marital Status Change</h5>
+                                <p>Recently married • Spouse not on policy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel - AI Insights -->
+            <div class="insights-panel">
+                <div class="panel-header">
+                    🤖 AI-Powered Insights Engine
+                </div>
+                <div class="ai-analysis-grid">
+                    <div class="analysis-card" id="analysis1">
+                        <div class="analysis-icon">📊</div>
+                        <h5>Behavior Analysis</h5>
+                    </div>
+                    <div class="analysis-card" id="analysis2">
+                        <div class="analysis-icon">🏠</div>
+                        <h5>Life Events</h5>
+                    </div>
+                    <div class="analysis-card" id="analysis3">
+                        <div class="analysis-icon">💰</div>
+                        <h5>Value Scoring</h5>
+                    </div>
+                    <div class="analysis-card" id="analysis4">
+                        <div class="analysis-icon">🎯</div>
+                        <h5>Propensity Model</h5>
+                    </div>
+                    <div class="analysis-card" id="analysis5">
+                        <div class="analysis-icon">📋</div>
+                        <h5>Policy Gaps</h5>
+                    </div>
+                    <div class="analysis-card" id="analysis6">
+                        <div class="analysis-icon">💬</div>
+                        <h5>Talk Tracks</h5>
+                    </div>
+                </div>
+
+                <div class="recommendations-section">
+                    <h3>🎯 Personalized Recommendations</h3>
+
+                    <div class="recommendation-card" id="rec1">
+                        <div class="rec-header">
+                            <div class="rec-type">
+                                <span class="rec-badge cross-sell">Cross-Sell</span>
+                                <span class="rec-badge" style="background: #FCE4EC; color: #C2185B;">High Priority</span>
+                            </div>
+                            <div class="rec-confidence">Confidence: <span>94%</span></div>
+                        </div>
+                        <h4 class="rec-title">Homeowners Insurance Bundle</h4>
+                        <p class="rec-reason">Customer purchased home 3 weeks ago. Property data shows $425,000 single-family home with no existing homeowners policy detected.</p>
+                        <div class="rec-value">
+                            <div class="value-item">Est. Premium: <strong>$1,240/yr</strong></div>
+                            <div class="value-item">Bundle Discount: <strong>15% off both</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card" id="rec2">
+                        <div class="rec-header">
+                            <div class="rec-type">
+                                <span class="rec-badge upsell">Upsell</span>
+                            </div>
+                            <div class="rec-confidence">Confidence: <span>87%</span></div>
+                        </div>
+                        <h4 class="rec-title">Add Spouse to Auto Policy</h4>
+                        <p class="rec-reason">Marriage record detected from 2 months ago. Adding spouse with clean driving record qualifies for multi-driver discount.</p>
+                        <div class="rec-value">
+                            <div class="value-item">Additional Premium: <strong>+$420/yr</strong></div>
+                            <div class="value-item">Multi-Driver Discount: <strong>12% savings</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card" id="rec3">
+                        <div class="rec-header">
+                            <div class="rec-type">
+                                <span class="rec-badge retention">Retention</span>
+                            </div>
+                            <div class="rec-confidence">Confidence: <span>91%</span></div>
+                        </div>
+                        <h4 class="rec-title">Loyalty Reward - Accident Forgiveness</h4>
+                        <p class="rec-reason">6-year tenure with zero claims qualifies customer for complimentary accident forgiveness. High retention impact for minimal cost.</p>
+                        <div class="rec-value">
+                            <div class="value-item">Cost: <strong>$0 (Loyalty Benefit)</strong></div>
+                            <div class="value-item">Retention Impact: <strong>+23% likelihood</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Coaching -->
+            <div class="coaching-panel">
+                <div class="panel-header">
+                    💡 Real-Time Coaching
+                </div>
+                <div class="coaching-content">
+                    <div class="sentiment-indicator">
+                        <div class="sentiment-header">
+                            <h5>Customer Sentiment</h5>
+                            <span class="sentiment-value" id="sentimentEmoji">😐</span>
+                        </div>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-fill" id="sentimentFill"></div>
+                        </div>
+                    </div>
+
+                    <div class="coaching-card" id="coach1">
+                        <h5>💡 Opening Strategy</h5>
+                        <p>Sarah is calling about renewal. Start by acknowledging her loyalty and excellent driving record before discussing the rate.</p>
+                        <div class="talk-track">"Sarah, I see you've been with us for 6 years with a perfect driving record—that's fantastic! Before we discuss your renewal, I noticed a few things that could actually save you money..."</div>
+                    </div>
+
+                    <div class="coaching-card" id="coach2">
+                        <h5>🏠 Home Purchase Opportunity</h5>
+                        <p>Congratulate her on the new home. Position the bundle as protecting her investment while saving on both policies.</p>
+                        <div class="talk-track">"Congratulations on your new home! Did you know that bundling your auto with homeowners insurance could save you 15% on both? Plus, I can get you a quote right now while we're on the call."</div>
+                    </div>
+
+                    <div class="coaching-card" id="coach3">
+                        <h5>💍 Spouse Addition</h5>
+                        <p>If she mentions her spouse, transition naturally into adding them. Multi-driver discount makes this a win-win.</p>
+                        <div class="talk-track">"I also noticed you recently got married—congratulations! If your spouse has a clean driving record, adding them to your policy could qualify you for our multi-driver discount."</div>
+                    </div>
+
+                    <div class="coaching-card" id="coach4">
+                        <h5>🎁 Close with Value</h5>
+                        <p>End by offering the loyalty benefit. This costs GEICO little but significantly increases retention probability.</p>
+                        <div class="talk-track">"As a thank you for being such a great customer, I'm adding accident forgiveness to your policy at no extra charge. You've earned it!"</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h5>Quick Actions</h5>
+                    <button class="action-btn primary" onclick="showResults()">Generate Bundle Quote</button>
+                    <button class="action-btn secondary">Send Follow-Up Email</button>
+                    <button class="action-btn secondary">Schedule Callback</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>✅ Call Outcome Summary</h2>
+                <p>AI-powered engagement increased conversion and customer lifetime value</p>
+            </div>
+
+            <div class="outcome-cards">
+                <div class="outcome-card">
+                    <div class="outcome-icon">📈</div>
+                    <h4>Revenue Impact</h4>
+                    <div class="outcome-value">+$2,687</div>
+                    <div class="outcome-label">Annual Premium Increase</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-icon">🎯</div>
+                    <h4>Products Sold</h4>
+                    <div class="outcome-value">3</div>
+                    <div class="outcome-label">Home + Spouse + Accident Forgiveness</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-icon">❤️</div>
+                    <h4>Customer Satisfaction</h4>
+                    <div class="outcome-value">9.2/10</div>
+                    <div class="outcome-label">Post-Call Survey Score</div>
+                </div>
+            </div>
+
+            <div class="audit-section">
+                <h3>🔍 Auditability & Compliance</h3>
+                <div class="audit-grid">
+                    <div class="audit-card">
+                        <h4>📊 AI Decision Log</h4>
+                        <div class="audit-item">
+                            <span>Session ID</span>
+                            <span>ENG-2024-1129-4472</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Model Version</span>
+                            <span>Claude 3.5 Sonnet</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Recommendations Made</span>
+                            <span>3</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Accepted by Customer</span>
+                            <span>3 (100%)</span>
+                        </div>
+                    </div>
+                    <div class="audit-card">
+                        <h4>🔒 Data Sources Used</h4>
+                        <div class="audit-item">
+                            <span>Policy System</span>
+                            <span>✓ Accessed</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Property Records</span>
+                            <span>✓ Accessed</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Public Records</span>
+                            <span>✓ Marriage</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Credit Data</span>
+                            <span>Not Used</span>
+                        </div>
+                    </div>
+                    <div class="audit-card">
+                        <h4>✅ Compliance Checks</h4>
+                        <div class="audit-item">
+                            <span>TCPA Compliance</span>
+                            <span style="color: var(--geico-green);">Passed</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Fair Lending</span>
+                            <span style="color: var(--geico-green);">Passed</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>State Regulations</span>
+                            <span style="color: var(--geico-green);">Passed</span>
+                        </div>
+                        <div class="audit-item">
+                            <span>Disclosure Given</span>
+                            <span style="color: var(--geico-green);">Yes</span>
+                        </div>
+                    </div>
+                </div>
+                <center>
+                    <button class="export-btn" onclick="exportAudit()">
+                        📥 Export Full Audit Trail
+                    </button>
+                </center>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+
+        function startDemo() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('agentDesktop').classList.add('active');
+
+            // Start AI analysis animation
+            animateAnalysis();
+        }
+
+        function animateAnalysis() {
+            const analysisCards = ['analysis1', 'analysis2', 'analysis3', 'analysis4', 'analysis5', 'analysis6'];
+            const recommendations = ['rec1', 'rec2', 'rec3'];
+            const coaching = ['coach1', 'coach2', 'coach3', 'coach4'];
+
+            let step = 0;
+
+            // Animate analysis cards
+            const analysisInterval = setInterval(() => {
+                if (step < analysisCards.length) {
+                    if (step > 0) {
+                        document.getElementById(analysisCards[step - 1]).classList.remove('active');
+                        document.getElementById(analysisCards[step - 1]).classList.add('complete');
+                    }
+                    document.getElementById(analysisCards[step]).classList.add('active');
+                    step++;
+                } else {
+                    document.getElementById(analysisCards[step - 1]).classList.remove('active');
+                    document.getElementById(analysisCards[step - 1]).classList.add('complete');
+                    clearInterval(analysisInterval);
+
+                    // Show recommendations
+                    showRecommendations(recommendations, coaching);
+                }
+            }, 800);
+        }
+
+        function showRecommendations(recommendations, coaching) {
+            let recStep = 0;
+            let coachStep = 0;
+
+            // Animate sentiment
+            setTimeout(() => {
+                document.getElementById('sentimentFill').style.width = '75%';
+                document.getElementById('sentimentEmoji').textContent = '😊';
+            }, 500);
+
+            // Show recommendations one by one
+            const recInterval = setInterval(() => {
+                if (recStep < recommendations.length) {
+                    document.getElementById(recommendations[recStep]).classList.add('visible');
+                    recStep++;
+                } else {
+                    clearInterval(recInterval);
+                }
+            }, 600);
+
+            // Show coaching tips one by one
+            const coachInterval = setInterval(() => {
+                if (coachStep < coaching.length) {
+                    document.getElementById(coaching[coachStep]).classList.add('visible');
+                    coachStep++;
+                } else {
+                    clearInterval(coachInterval);
+                }
+            }, 800);
+        }
+
+        function showResults() {
+            document.getElementById('resultsSection').classList.add('active');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportAudit() {
+            const auditData = {
+                sessionId: "ENG-2024-1129-4472",
+                timestamp: new Date().toISOString(),
+                customer: {
+                    name: "Sarah Mitchell",
+                    customerId: "CUST-2019-44821",
+                    tenure: "6 years"
+                },
+                aiEngine: {
+                    model: "Claude 3.5 Sonnet",
+                    version: "2024.11",
+                    analysisModules: [
+                        "Behavior Analysis",
+                        "Life Events Detection",
+                        "Value Scoring",
+                        "Propensity Modeling",
+                        "Policy Gap Analysis",
+                        "Talk Track Generation"
+                    ]
+                },
+                recommendations: [
+                    {
+                        type: "Cross-Sell",
+                        product: "Homeowners Insurance Bundle",
+                        confidence: 0.94,
+                        accepted: true,
+                        premium: 1240
+                    },
+                    {
+                        type: "Upsell",
+                        product: "Add Spouse to Auto Policy",
+                        confidence: 0.87,
+                        accepted: true,
+                        premium: 420
+                    },
+                    {
+                        type: "Retention",
+                        product: "Accident Forgiveness",
+                        confidence: 0.91,
+                        accepted: true,
+                        premium: 0
+                    }
+                ],
+                dataSources: {
+                    policySystem: true,
+                    propertyRecords: true,
+                    publicRecords: ["marriage"],
+                    creditData: false
+                },
+                compliance: {
+                    tcpa: "passed",
+                    fairLending: "passed",
+                    stateRegulations: "passed",
+                    disclosureGiven: true
+                },
+                outcome: {
+                    revenueImpact: 2687,
+                    productsSold: 3,
+                    customerSatisfaction: 9.2
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'engagement-audit-ENG-2024-1129-4472.json';
+            a.click();
+        }
+    </script>
+</body>
+</html>

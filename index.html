@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEICO × Anthropic: Responsible AI for the Future of Insurance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* GEICO Primary Colors */
+            --geico-blue: #003D7A;
+            --geico-navy: #002B5C;
+            --geico-bright-blue: #0066CC;
+
+            /* GEICO Secondary Colors */
+            --geico-green: #78BE20;
+            --geico-orange: #FF6B00;
+            --geico-yellow: #FFD100;
+
+            /* Neutrals */
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+
+            /* Gradients */
+            --gradient-bg: linear-gradient(135deg, #002B5C 0%, #003D7A 50%, #0066CC 100%);
+            --gradient-cta: linear-gradient(135deg, #78BE20 0%, #5FA015 100%);
+
+            /* Typography */
+            --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
+            --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--dark-gray);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 43, 92, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 2rem;
+            background: rgba(0, 43, 92, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .logo span {
+            color: var(--geico-green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--geico-green);
+        }
+
+        .cta-button {
+            background: var(--geico-green);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cta-button:hover {
+            background: #5FA015;
+            color: var(--white);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(120, 190, 32, 0.4);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: var(--gradient-bg);
+            padding: 8rem 2rem 4rem;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: var(--font-headline);
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .hero h2 {
+            font-family: var(--font-body);
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            line-height: 1.6;
+            max-width: 900px;
+        }
+
+        .value-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .value-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .value-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .value-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .value-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-cta p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-cta .cta-button {
+            background: var(--geico-green);
+            color: var(--white);
+            font-size: 1.1rem;
+            padding: 1rem 2.5rem;
+        }
+
+        .hero-cta .cta-button:hover {
+            background: #5FA015;
+            color: var(--white);
+            border-color: transparent;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 2rem;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: var(--font-headline);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .section-intro {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            color: var(--medium-gray);
+            line-height: 1.8;
+        }
+
+        /* Why Claude Section */
+        .why-claude {
+            background: var(--light-gray);
+        }
+
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .challenge-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--geico-bright-blue);
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .challenge-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            color: var(--geico-blue);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .challenge-card h4 {
+            font-size: 1.1rem;
+            color: var(--geico-bright-blue);
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .challenge-card ul {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-card li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            color: var(--medium-gray);
+        }
+
+        .challenge-card li::before {
+            content: '▪';
+            position: absolute;
+            left: 0;
+            color: var(--geico-bright-blue);
+        }
+
+        /* Claude Code Section */
+        .claude-code {
+            background: var(--white);
+        }
+
+        .capability-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+            align-items: stretch;
+        }
+
+        @media (max-width: 1024px) {
+            .capability-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .capability-card {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .capability-card ul {
+            flex-grow: 0;
+        }
+
+        .capability-card .case-study-badge {
+            margin-top: auto;
+        }
+
+        .capability-card:hover {
+            border-color: var(--geico-bright-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 120, 193, 0.15);
+        }
+
+        .capability-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .capability-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .capability-card ul {
+            list-style: none;
+        }
+
+        .capability-card li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+        }
+
+        .capability-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--geico-bright-blue);
+            font-weight: bold;
+        }
+
+        .case-study-badge {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 8px;
+            border-left: 4px solid var(--geico-green);
+        }
+
+        .case-study-badge .badge-label {
+            display: inline-block;
+            background: var(--geico-green);
+            color: var(--white);
+            font-family: var(--font-headline);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        .case-study-badge h4 {
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            color: var(--geico-blue);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .case-study-badge p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .case-study-badge blockquote {
+            font-style: italic;
+            color: var(--medium-gray);
+            border-left: 2px solid var(--geico-bright-blue);
+            padding-left: 1rem;
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+
+        .case-study-link {
+            display: inline-block;
+            color: var(--geico-bright-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .case-study-link:hover {
+            color: var(--geico-green);
+        }
+
+        .video-showcase {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .video-showcase h3 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            color: var(--geico-blue);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .video-thumbnail-large {
+            position: relative;
+            display: block;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .video-thumbnail-large:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-thumbnail-large img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .play-button-large {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 61, 122, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .video-thumbnail-large:hover .play-button-large {
+            background: var(--geico-green);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .integration-callout {
+            background: var(--gradient-bg);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .integration-callout h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .integration-callout ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .integration-callout li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .integration-callout li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .use-case-spotlight {
+            background: var(--geico-bright-blue);
+            color: var(--white);
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-top: 2rem;
+        }
+
+        .use-case-spotlight h3 {
+            font-family: var(--font-headline);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .use-case-spotlight p {
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* Custom Agents Section */
+        .custom-agents {
+            background: var(--light-gray);
+        }
+
+        .why-custom-box {
+            background: var(--gradient-bg);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .why-custom-box h3 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+        }
+
+        .why-custom-box ul {
+            list-style: none;
+        }
+
+        .why-custom-box li {
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .why-custom-box li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            font-size: 1.3rem;
+        }
+
+        .agent-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-left: 6px solid var(--geico-bright-blue);
+        }
+
+        .agent-card h3 {
+            font-family: var(--font-headline);
+            font-size: 2rem;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .agent-card h4 {
+            font-size: 1.2rem;
+            color: var(--geico-bright-blue);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-card p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .agent-card ul {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .agent-card li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .agent-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--geico-bright-blue);
+        }
+
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding: 2rem;
+            background: var(--light-gray);
+            border-radius: 12px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--geico-bright-blue);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.95rem;
+            color: var(--medium-gray);
+            margin-top: 0.5rem;
+        }
+
+        .demo-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--geico-green);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 4px;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(120, 190, 32, 0.3);
+        }
+
+        .demo-button:hover {
+            background: #5FA015;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(120, 190, 32, 0.4);
+        }
+
+        .demo-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-size: 0.75rem;
+        }
+
+        .security-diagram {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+            border: 2px solid var(--geico-bright-blue);
+        }
+
+        .security-diagram h3 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            color: var(--geico-blue);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .security-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .security-feature {
+            padding: 1rem;
+            background: var(--light-gray);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* Enterprise Productivity Section */
+        .enterprise-productivity {
+            background: var(--white);
+        }
+
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .integration-box {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .integration-box:hover {
+            border-color: var(--geico-bright-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 120, 193, 0.15);
+        }
+
+        .integration-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .integration-box h3 {
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .integration-box ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .integration-box li {
+            padding-left: 1.2rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .integration-box li::before {
+            content: '▪';
+            position: absolute;
+            left: 0;
+            color: var(--geico-bright-blue);
+        }
+
+        .use-case-tabs {
+            margin-top: 3rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            background: var(--light-gray);
+            color: var(--geico-blue);
+            border: 2px solid transparent;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            border-color: var(--geico-green);
+        }
+
+        .tab-button.active {
+            background: var(--geico-green);
+            color: var(--white);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 2.5rem;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .productivity-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .productivity-metric {
+            background: var(--gradient-bg);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .productivity-metric:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 120, 193, 0.3);
+        }
+
+        .productivity-metric-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .productivity-metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .productivity-metric-label {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        .governance-box {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+            border: 2px solid var(--geico-bright-blue);
+        }
+
+        .governance-box h3 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            color: var(--geico-blue);
+            margin-bottom: 2rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .governance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .governance-item h4 {
+            font-size: 1.2rem;
+            color: var(--geico-bright-blue);
+            margin-bottom: 1rem;
+        }
+
+        .governance-item ul {
+            list-style: none;
+        }
+
+        .governance-item li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .governance-item li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--geico-bright-blue);
+            font-weight: bold;
+        }
+
+        /* Safety Section */
+        .safety-section {
+            background: var(--light-gray);
+        }
+
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pillar-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid var(--geico-green);
+        }
+
+        .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .pillar-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1.4rem;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .pillar-intro {
+            color: var(--medium-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .pillar-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .pillar-card li {
+            padding-left: 0;
+            position: relative;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .pillar-card li strong {
+            color: var(--geico-navy);
+        }
+
+        .pillar-highlight {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            border-left: 4px solid var(--geico-green);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .pillar-highlight strong {
+            color: var(--geico-navy);
+        }
+
+        .safety-certifications {
+            background: var(--gradient-bg);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .safety-certifications h3 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cert-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .cert-badge {
+            background: var(--geico-green);
+            color: var(--white);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .safety-quote {
+            background: var(--geico-bright-blue);
+            color: var(--white);
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1024px) {
+            .pillar-grid {
+                grid-template-columns: 1fr;
+            }
+            .cert-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cert-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Learning Section */
+        .learning-section {
+            background: var(--white);
+        }
+
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .learning-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .learning-card {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .learning-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: var(--geico-navy);
+        }
+
+        .video-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 61, 122, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        .learning-card:hover .play-button {
+            background: var(--geico-green);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .learning-content {
+            padding: 1.5rem;
+        }
+
+        .learning-content h3 {
+            font-family: var(--font-headline);
+            font-size: 1.1rem;
+            color: var(--geico-navy);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .learning-content p {
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1024px) {
+            .learning-grid {
+                grid-template-columns: 1fr;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        /* Getting Started Section */
+        .getting-started {
+            background: var(--white);
+        }
+
+        .engagement-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .engagement-card {
+            background: var(--light-gray);
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .engagement-card:hover {
+            border-color: var(--geico-green);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(120, 190, 32, 0.2);
+        }
+
+        .engagement-card h3 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            color: var(--geico-blue);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .engagement-card .timeline {
+            background: var(--geico-green);
+            color: var(--white);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .engagement-card p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .engagement-card .best-for {
+            font-weight: 600;
+            color: var(--geico-blue);
+        }
+
+        .next-steps {
+            background: var(--gradient-bg);
+            color: var(--white);
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .next-steps h3 {
+            font-family: var(--font-headline);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .cta-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .cta-box:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .cta-box h4 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .cta-box p {
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        .cta-box .cta-button {
+            background: var(--geico-green);
+            color: var(--white);
+            display: inline-block;
+        }
+
+        .cta-box .cta-button:hover {
+            background: #5FA015;
+            color: var(--white);
+        }
+
+        .contact-info {
+            margin-top: 3rem;
+        }
+
+        .contact-info h4 {
+            font-family: var(--font-headline);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .contact-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .contact-list li {
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+        }
+
+        .contact-list a {
+            color: var(--white);
+            text-decoration: underline;
+        }
+
+        .resources-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .resources-list li::before {
+            content: '📄';
+            margin-right: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-headline);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--geico-green);
+            text-transform: uppercase;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+            color: var(--geico-green);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 2rem;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--geico-navy);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero h2 {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .value-cards,
+            .challenge-grid,
+            .capability-cards,
+            .engagement-options {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .framework-layers {
+                max-width: 100%;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--geico-green);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(120, 190, 32, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .scroll-top:hover {
+            background: var(--geico-blue);
+            transform: translateY(-5px);
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo">GEICO <span>×</span> Anthropic</a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li><a href="#claude-code" onclick="closeMobileMenu()">Claude Code</a></li>
+                <li><a href="#custom-agents" onclick="closeMobileMenu()">Custom Agents</a></li>
+                <li><a href="#safety" onclick="closeMobileMenu()">Safety</a></li>
+                <li><a href="#getting-started" onclick="closeMobileMenu()">Get Started</a></li>
+                <li><a href="#getting-started" class="cta-button" onclick="closeMobileMenu()">Schedule a Demo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <h1 class="fade-in">GEICO × Anthropic: Responsible AI for the Future of Insurance</h1>
+            <h2 class="fade-in">Purpose-built AI solutions to navigate regulatory complexity, optimize costs, and transform customer experiences—while maintaining the highest standards of compliance and security.</h2>
+
+            <div class="value-cards">
+                <div class="value-card fade-in">
+                    <div class="value-card-icon">🛡️</div>
+                    <h3>Regulatory Excellence</h3>
+                    <p>Built for Compliance: Claude understands the complexity of insurance regulations and operates within strict guidelines from day one.</p>
+                </div>
+                <div class="value-card fade-in">
+                    <div class="value-card-icon">📊</div>
+                    <h3>Cost-Effective AI</h3>
+                    <p>Flexible Deployment: Deploy on AWS Bedrock, Google Vertex AI, Azure, or direct API—wherever your infrastructure lives.</p>
+                </div>
+                <div class="value-card fade-in">
+                    <div class="value-card-icon">🔒</div>
+                    <h3>Enterprise Security</h3>
+                    <p>Your Data, Your Control: On-premise deployment options, zero data training on customer information, and enterprise-grade security.</p>
+                </div>
+            </div>
+
+            <div class="hero-cta fade-in">
+                <p>GEICO's multi-cloud strategy demands AI that works everywhere. Claude deploys seamlessly across AWS, Google Cloud, and Azure—meeting you where you are while addressing the unique challenges of the regulated insurance industry.</p>
+                <a href="#why-claude" class="cta-button">Explore Our Solutions</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Claude Section -->
+    <section id="why-claude" class="why-claude">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Why Claude is Uniquely Positioned for GEICO's AI Strategy</h2>
+            <p class="section-intro fade-in">Insurance is one of the most regulated, complex industries in the world. GEICO's forward-thinking multi-cloud strategy demonstrates a commitment to innovation and flexibility. Anthropic brings responsible AI purpose-built for high-stakes, regulated environments—available on every major cloud platform.</p>
+
+            <div class="challenge-grid">
+                <div class="challenge-card fade-in">
+                    <h3>Regulatory Complexity & Compliance</h3>
+                    <h4>GEICO's Challenge:</h4>
+                    <ul>
+                        <li>50-state regulatory requirements</li>
+                        <li>Data privacy mandates (HIPAA, state insurance laws)</li>
+                        <li>Explainability requirements for underwriting decisions</li>
+                    </ul>
+                    <h4>How Claude Helps:</h4>
+                    <ul>
+                        <li>Constitutional AI trained to follow rules and explain reasoning</li>
+                        <li>Audit trails for every decision</li>
+                        <li>Transparent model behavior for regulatory submissions</li>
+                        <li>Built-in safeguards against biased or non-compliant outputs</li>
+                    </ul>
+                </div>
+
+                <div class="challenge-card fade-in">
+                    <h3>Cost Optimization at Scale</h3>
+                    <h4>GEICO's Challenge:</h4>
+                    <ul>
+                        <li>Managing GPU compute costs for self-hosted models</li>
+                        <li>Balancing performance vs. infrastructure spend</li>
+                        <li>Need for 99.9%+ uptime on customer-facing applications</li>
+                    </ul>
+                    <h4>How Claude Helps:</h4>
+                    <ul>
+                        <li>Flexible deployment: AWS Bedrock, Google Vertex AI, Azure, or direct API</li>
+                        <li>No cloud lock-in—same Claude, same capabilities, everywhere</li>
+                        <li>Reduce inference costs with efficient context handling (200K token context window)</li>
+                        <li>Proven reliability for mission-critical applications</li>
+                    </ul>
+                </div>
+
+                <div class="challenge-card fade-in">
+                    <h3>Multi-Cloud & Infrastructure Flexibility</h3>
+                    <h4>GEICO's Challenge:</h4>
+                    <ul>
+                        <li>Distributed workloads across AWS, Google Cloud, and Azure</li>
+                        <li>Integration with existing ML pipelines and tooling</li>
+                        <li>Need to avoid vendor lock-in</li>
+                    </ul>
+                    <h4>How Claude Helps:</h4>
+                    <ul>
+                        <li>True multi-cloud: AWS Bedrock, Google Vertex AI, Azure, or direct API</li>
+                        <li>Model Context Protocol (MCP) for seamless integration with your existing tools</li>
+                        <li>One AI partner across your entire infrastructure</li>
+                    </ul>
+                </div>
+
+                <div class="challenge-card fade-in">
+                    <h3>Advanced LLM Capabilities</h3>
+                    <h4>GEICO's Challenge:</h4>
+                    <ul>
+                        <li>Complex reasoning for underwriting and claims decisions</li>
+                        <li>Domain-specific knowledge requirements</li>
+                        <li>Need for cutting-edge AI techniques</li>
+                    </ul>
+                    <h4>How Claude Helps:</h4>
+                    <ul>
+                        <li>Prompt engineering & few-shot learning (often better than fine-tuning)</li>
+                        <li>Extended thinking for complex reasoning tasks (underwriting, claims analysis)</li>
+                        <li>Partner with Anthropic's research team for custom solutions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Claude Code Section -->
+    <section id="claude-code" class="claude-code">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Claude Code: Modernizing GEICO's Technology Stack</h2>
+            <p class="section-intro fade-in">From Legacy COBOL to Modern Architectures—Accelerate Your Digital Transformation. GEICO's technology infrastructure powers millions of policies and customer interactions daily. Claude Code helps your engineering teams modernize legacy systems, accelerate development cycles, and maintain the reliability your customers depend on.</p>
+
+            <div class="capability-cards">
+                <div class="capability-card fade-in">
+                    <div class="capability-icon">🔄</div>
+                    <h3>Code Modernization</h3>
+                    <ul>
+                        <li>Legacy Transformation: Migrate COBOL and mainframe systems to modern Java, Python, or cloud-native architectures</li>
+                        <li>Technical Debt Reduction: Automatically identify and remediate code smells, outdated patterns, and security vulnerabilities</li>
+                        <li>Documentation Generation: Create comprehensive docs for undocumented legacy code</li>
+                        <li>Architecture Evolution: Decompose monoliths into modern microservices</li>
+                        <li>Real Results: Insurance carriers have reduced migration time by 60% using Claude Code</li>
+                    </ul>
+                    <div class="case-study-badge">
+                        <span class="badge-label">Case Study</span>
+                        <h4>Rocket Mortgage: 3+ Years of Stalled Migration → 4 Months</h4>
+                        <p>Rocket's core mortgage origination platform had been stuck in a legacy PHP to Angular migration for nearly 3 years. Using Claude Code as an AI pair programmer, senior engineers achieved a <strong>145% increase in throughput</strong> and completed the migration in just 4 months—with zero client-impacting incidents.</p>
+                        <blockquote>"It felt like pair programming with a supercharged teammate."</blockquote>
+                        <a href="https://explore.myrocketcareer.com/explore/technology-and-product/accelerated-modernization-rocket-mortgage-origination" target="_blank" class="case-study-link">Read the full story →</a>
+                    </div>
+                </div>
+
+                <div class="capability-card fade-in">
+                    <div class="capability-icon">🚀</div>
+                    <h3>SDLC Acceleration</h3>
+                    <ul>
+                        <li>AI Pair Programming: Write, review, and debug code 2-3x faster with intelligent assistance</li>
+                        <li>Automated Code Review: Catch bugs, security vulnerabilities, and compliance issues before deployment</li>
+                        <li>Test Generation: Create comprehensive test suites (unit, integration, E2E) automatically</li>
+                        <li>CI/CD Integration: Works seamlessly with GitHub Actions, Jenkins, GitLab CI, and your existing pipelines</li>
+                        <li>API Development: Build secure, scalable APIs for mobile apps and partner integrations</li>
+                    </ul>
+                    <div class="case-study-badge">
+                        <span class="badge-label">Case Study</span>
+                        <h4>Spotify: Background Coding Agents at Scale</h4>
+                        <p>Spotify built background coding agents using Claude Code to automate large-scale migrations across thousands of repositories. With integrated verification (formatters, linters, tests) and standardized Git operations, they've processed <strong>1,500+ PRs</strong> across <strong>~50 migrations</strong>—with the majority successfully merged into production.</p>
+                        <blockquote>"Claude Code handled more sophisticated prompts and task decomposition than our previous solutions."<br><span style="font-style: normal; font-size: 0.85rem;">— Spotify Engineering</span></blockquote>
+                        <a href="https://engineering.atspotify.com/2025/11/context-engineering-background-coding-agents-part-2" target="_blank" class="case-study-link">Read the full story →</a>
+                    </div>
+                </div>
+
+                <div class="capability-card fade-in">
+                    <div class="capability-icon">📊</div>
+                    <h3>Data Engineering & Analytics</h3>
+                    <ul>
+                        <li>Pipeline Development: Build robust data pipelines for feature stores and ML workflows</li>
+                        <li>SQL Optimization: Improve query performance on massive insurance datasets</li>
+                        <li>ETL Automation: Accelerate data transformation and integration workflows</li>
+                        <li>Analytics & Insights: Generate actionable insights from claims, customer behavior, and underwriting data</li>
+                        <li>Data Quality: Automated validation, cleansing, and monitoring of data pipelines</li>
+                    </ul>
+                    <div class="case-study-badge">
+                        <span class="badge-label">Case Study</span>
+                        <h4>Brex: Democratizing Data Engineering</h4>
+                        <p>Brex built an AI data engineering agent with Claude Code that transformed specialized work into accessible tasks. Tasks that previously required specialized knowledge—like adding data tables with all necessary file edits and test configurations—<strong>can now be completed by any engineer</strong>. Result: <strong>4x speed increase</strong> across 2x more contributors.</p>
+                        <blockquote>"It's like a 4x speed increase across maybe 2x more people that are contributing."<br><span style="font-style: normal; font-size: 0.85rem;">— Sumeet Marwaha, Head of Data & Analytics</span></blockquote>
+                        <a href="https://claude.com/blog/how-brex-improves-code-quality-and-productivity-with-claude-code" target="_blank" class="case-study-link">Read the full story →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-showcase fade-in">
+                <h3>See Claude Code in Action</h3>
+                <a href="https://www.youtube.com/watch?v=OwMu0pyYZBc" target="_blank" class="video-thumbnail-large">
+                    <img src="https://img.youtube.com/vi/OwMu0pyYZBc/maxresdefault.jpg" alt="Claude Code Demo">
+                    <div class="play-button-large">▶</div>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Custom Agents Section -->
+    <section id="custom-agents" class="custom-agents">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Custom Agents: Purpose-Built for Insurance Excellence</h2>
+            <p class="section-intro fade-in">Beyond Generic AI—Agents Designed for GEICO's Unique Workflows. GEICO processes millions of claims, quotes, and customer interactions annually. Our Custom Agents—built by Anthropic's product engineers—integrate seamlessly with your existing systems to deliver measurable ROI while maintaining your high standards for security and compliance.</p>
+
+            <div class="why-custom-box fade-in">
+                <h3>The Anthropic Difference</h3>
+                <ul>
+                    <li>Not just API access—Anthropic engineers build agents specifically for your processes</li>
+                    <li>Deep integration with Guidewire, Duck Creek, and your proprietary systems</li>
+                    <li>Secure deployment via Model Context Protocol (MCP)</li>
+                    <li>Continuous monitoring, improvement, and support</li>
+                </ul>
+            </div>
+
+            <div class="agent-card fade-in">
+                <h3>Agent #1: Intelligent Claims Adjudication</h3>
+                <p><strong>Problem:</strong> Manual review of complex claims is time-consuming and inconsistent</p>
+                <p><strong>Solution:</strong> AI agent that reviews claims documentation, identifies fraud signals, recommends settlements, and explains reasoning for compliance</p>
+                <h4>Technical Integration:</h4>
+                <ul>
+                    <li>Connects to Guidewire ClaimCenter, Duck Creek Claims, or proprietary systems</li>
+                    <li>Integrates with fraud detection databases (ISO, NICB)</li>
+                    <li>Real-time API access via MCP</li>
+                    <li>Audit trail for every decision</li>
+                </ul>
+                <div class="impact-metrics">
+                    <div class="metric">
+                        <span class="metric-value">40%</span>
+                        <span class="metric-label">Reduction in claims processing time</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">25%</span>
+                        <span class="metric-label">Improvement in fraud detection accuracy</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">100%</span>
+                        <span class="metric-label">Explainability for regulatory requirements</span>
+                    </div>
+                </div>
+                <a href="geico-claims-demo.html" class="demo-button" target="_blank">
+                    <span class="demo-icon">▶</span>
+                    See Live Demo
+                </a>
+            </div>
+
+            <div class="agent-card fade-in">
+                <h3>Agent #2: Underwriting Intelligence & Risk Assessment</h3>
+                <p><strong>Problem:</strong> Underwriters juggle multiple data sources, struggle with edge cases, need faster risk evaluation</p>
+                <p><strong>Solution:</strong> AI agent that aggregates data from LexisNexis, Verisk, MVRs, credit reports, and proprietary models to provide instant risk assessments with detailed explanations</p>
+                <h4>Technical Integration:</h4>
+                <ul>
+                    <li>Integrates with your rating engines and policy admin systems</li>
+                    <li>Real-time API connections to external data providers</li>
+                    <li>Compatible with existing actuarial models</li>
+                    <li>Structured output for downstream systems</li>
+                </ul>
+                <div class="impact-metrics">
+                    <div class="metric">
+                        <span class="metric-value">50%</span>
+                        <span class="metric-label">Faster underwriting decisions</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">15%</span>
+                        <span class="metric-label">Improvement in risk selection accuracy</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Instant</span>
+                        <span class="metric-label">Quote generation</span>
+                    </div>
+                </div>
+                <a href="geico-underwriting-demo.html" class="demo-button" target="_blank">
+                    <span class="demo-icon">▶</span>
+                    See Live Demo
+                </a>
+            </div>
+
+            <div class="agent-card fade-in">
+                <h3>Agent #3: Regulatory Compliance & Document Intelligence</h3>
+                <p><strong>Problem:</strong> Keeping pace with 50-state regulatory changes, ensuring policy language compliance, training agents on new rules</p>
+                <p><strong>Solution:</strong> AI agent that monitors regulatory updates, reviews policy documents for compliance, generates training materials, and answers agent questions about regulations</p>
+                <h4>Technical Integration:</h4>
+                <ul>
+                    <li>Connects to document management systems (SharePoint, Documentum)</li>
+                    <li>Integrates with regulatory databases (SERFF, state DOI websites)</li>
+                    <li>Links to training platforms and HR systems</li>
+                    <li>Knowledge base for billions of documents</li>
+                </ul>
+                <div class="impact-metrics">
+                    <div class="metric">
+                        <span class="metric-value">70%</span>
+                        <span class="metric-label">Reduction in compliance review time</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Proactive</span>
+                        <span class="metric-label">Identification of regulatory risks</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Automated</span>
+                        <span class="metric-label">Training content creation</span>
+                    </div>
+                </div>
+                <a href="geico-compliance-demo.html" class="demo-button" target="_blank">
+                    <span class="demo-icon">▶</span>
+                    See Live Demo
+                </a>
+            </div>
+
+            <div class="agent-card fade-in">
+                <h3>Agent #4: Personalized Customer Engagement</h3>
+                <p><strong>Problem:</strong> Generic quotes don't address customer-specific needs; agents lack real-time insights for upselling/cross-selling</p>
+                <p><strong>Solution:</strong> AI agent that analyzes customer data, driving history, life events, and policy gaps to provide personalized recommendations and real-time guidance for agents</p>
+                <h4>Technical Integration:</h4>
+                <ul>
+                    <li>Integrates with quoting systems, Salesforce, customer data platforms</li>
+                    <li>Real-time API for agent desktop applications</li>
+                    <li>Connects to marketing automation tools</li>
+                    <li>Privacy-compliant data access</li>
+                </ul>
+                <div class="impact-metrics">
+                    <div class="metric">
+                        <span class="metric-value">20%</span>
+                        <span class="metric-label">Increase in conversion rates</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">30%</span>
+                        <span class="metric-label">Improvement in cross-sell success</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-value">Enhanced</span>
+                        <span class="metric-label">Customer satisfaction scores</span>
+                    </div>
+                </div>
+                <a href="geico-engagement-demo.html" class="demo-button">
+                    See Live Demo →
+                </a>
+            </div>
+
+            <div class="security-diagram fade-in">
+                <h3>How Custom Agents Stay Safe & Compliant</h3>
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--medium-gray);">Customer controls what data agents can access • Real-time performance dashboards • Circuit breakers for anomalous behavior • Your data never trains our models</p>
+                <div class="security-features">
+                    <div class="security-feature">✓ On-premise deployment options</div>
+                    <div class="security-feature">✓ Role-based access control</div>
+                    <div class="security-feature">✓ End-to-end encryption</div>
+                    <div class="security-feature">✓ SOC 2 Type II compliance</div>
+                    <div class="security-feature">✓ Regular third-party security audits</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Section -->
+    <section id="safety" class="safety-section">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Why Anthropic is the Right AI Partner for Insurance</h2>
+            <p class="section-intro fade-in">Insurance demands AI that's not just powerful, but provably safe, transparent, and built for regulatory scrutiny. Anthropic was founded with safety at its core—and we've spent years building the infrastructure that makes AI deployable in high-stakes environments like insurance.</p>
+
+            <div class="pillar-grid">
+                <div class="pillar-card fade-in">
+                    <div class="pillar-icon">🧠</div>
+                    <h3>Pillar 1: Purpose-Built Model Architecture</h3>
+                    <p class="pillar-intro">Our models are designed from the ground up to be helpful, harmless, and honest—not retrofitted with safety as an afterthought.</p>
+                    <ul>
+                        <li><strong>Constitutional AI:</strong> Our proprietary training methodology embeds ethical principles and behavioral boundaries directly into the model's core</li>
+                        <li><strong>Harmlessness by Design:</strong> Claude is trained to refuse harmful requests, acknowledge uncertainty, and defer to human judgment on high-stakes decisions</li>
+                        <li><strong>No Data Training:</strong> Your data never trains our models—period. Customer information stays yours</li>
+                        <li><strong>Published Research:</strong> We openly share our safety research so the industry can learn and hold us accountable</li>
+                    </ul>
+                    <div class="pillar-highlight">
+                        <strong>For Insurance:</strong> Claude won't approve fraudulent claims, generate misleading policy language, or take actions outside its defined scope—these constraints are baked into the model itself.
+                    </div>
+                </div>
+
+                <div class="pillar-card fade-in">
+                    <div class="pillar-icon">📋</div>
+                    <h3>Pillar 2: Auditability & Traceability</h3>
+                    <p class="pillar-intro">Every AI decision can be traced, explained, and documented—meeting the rigorous standards insurance regulators demand.</p>
+                    <ul>
+                        <li><strong>Complete Decision Chains:</strong> Full visibility into every step of the AI's reasoning process, from input to output</li>
+                        <li><strong>Explainable Outputs:</strong> Claude provides clear rationale for recommendations, citing specific factors and data points</li>
+                        <li><strong>Immutable Audit Logs:</strong> Timestamped, tamper-proof records of every interaction, decision, and action</li>
+                        <li><strong>Regulatory-Ready Exports:</strong> One-click export of audit trails in formats required by state DOIs and federal regulators</li>
+                    </ul>
+                    <div class="pillar-highlight">
+                        <strong>For Insurance:</strong> When a regulator asks "why did the AI recommend denying this claim?", you'll have a complete, defensible answer—every time.
+                    </div>
+                </div>
+
+                <div class="pillar-card fade-in">
+                    <div class="pillar-icon">📊</div>
+                    <h3>Pillar 3: Scalable Supervision & Monitoring</h3>
+                    <p class="pillar-intro">Traditional oversight doesn't scale to thousands of AI interactions daily. Our monitoring infrastructure does.</p>
+                    <ul>
+                        <li><strong>Real-Time Dashboards:</strong> Live visibility into agent performance, decision patterns, and anomalies across your organization</li>
+                        <li><strong>Anomaly Detection:</strong> AI-powered monitoring that flags unusual patterns before they become problems</li>
+                        <li><strong>Human-in-the-Loop Workflows:</strong> Configurable escalation paths that route high-stakes decisions to human reviewers</li>
+                        <li><strong>Circuit Breakers:</strong> Automatic safeguards that halt operations if behavior deviates from expected parameters</li>
+                    </ul>
+                    <div class="pillar-highlight">
+                        <strong>For Insurance:</strong> Monitor claims decisions, underwriting recommendations, and customer interactions at scale—with drill-down capabilities to investigate any specific case.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Learning Section -->
+    <section id="learning" class="learning-section">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Learn More About Our Technology</h2>
+            <p class="section-intro fade-in">Dive deeper into the tools and frameworks powering Anthropic's enterprise AI solutions.</p>
+
+            <div class="learning-grid">
+                <a href="https://www.youtube.com/watch?v=uhJJgc-0iTQ&t=74s" target="_blank" class="learning-card fade-in">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/uhJJgc-0iTQ/maxresdefault.jpg" alt="Agents Discussion">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="learning-content">
+                        <h3>Agents Discussion</h3>
+                        <p>Explore the architecture and capabilities of AI agents, and how they're transforming enterprise workflows.</p>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=aZLr962R6Ag&t=1s" target="_blank" class="learning-card fade-in">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/aZLr962R6Ag/maxresdefault.jpg" alt="Model Context Protocol (MCP)">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="learning-content">
+                        <h3>Model Context Protocol (MCP)</h3>
+                        <p>Learn how MCP enables secure, controlled integration between Claude and your enterprise systems.</p>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=DAQJvGjlgVM&t=3s" target="_blank" class="learning-card fade-in">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/DAQJvGjlgVM/maxresdefault.jpg" alt="Building & Prototyping with Claude Code">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="learning-content">
+                        <h3>Building & Prototyping with Claude Code</h3>
+                        <p>See how development teams use Claude Code to accelerate building and rapidly prototype new solutions.</p>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=T9aRN5JkmL8&t=1281s" target="_blank" class="learning-card fade-in">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/T9aRN5JkmL8/maxresdefault.jpg" alt="Prompt Engineering">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="learning-content">
+                        <h3>Prompt Engineering</h3>
+                        <p>Master the art of crafting effective prompts to get the best results from Claude in enterprise applications.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section id="getting-started" class="getting-started">
+        <div class="section-container">
+            <h2 class="section-title fade-in">Your AI Transformation Starts Here</h2>
+            <p class="section-intro fade-in">GEICO's investment in AI infrastructure demonstrates readiness for the next phase: deploying responsible, compliant, high-impact AI across the enterprise. Let's discuss how Anthropic can accelerate your goals.</p>
+
+            <div class="engagement-options">
+                <div class="engagement-card fade-in">
+                    <h3>Claude Code</h3>
+                    <div class="timeline">Timeline: 4-8 weeks</div>
+                    <p>Equip your engineering teams with Claude Code for legacy modernization, development acceleration, and technical debt reduction.</p>
+                    <p class="best-for">Best For: Technology transformation, code modernization, DevOps efficiency</p>
+                </div>
+
+                <div class="engagement-card fade-in">
+                    <h3>Custom Agents</h3>
+                    <div class="timeline">Timeline: 12-20 weeks</div>
+                    <p>Anthropic's product engineers build custom agents integrated with your core systems (Guidewire, Duck Creek, proprietary platforms). Deep partnership for transformative use cases.</p>
+                    <p class="best-for">Best For: Claims automation, underwriting intelligence, compliance management, customer service</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>Solutions</h4>
+                    <ul>
+                        <li><a href="#claude-code">Claude Code</a></li>
+                        <li><a href="#custom-agents">Custom Agents</a></li>
+                        <li><a href="#">API Platform</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Industries</h4>
+                    <ul>
+                        <li><a href="#">Insurance & Financial Services</a></li>
+                        <li><a href="#">Healthcare</a></li>
+                        <li><a href="#">Legal & Professional Services</a></li>
+                        <li><a href="#">Technology</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://docs.anthropic.com">Documentation</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Research Papers</a></li>
+                        <li><a href="https://www.anthropic.com/news">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://www.anthropic.com/company">About Anthropic</a></li>
+                        <li><a href="https://www.anthropic.com/careers">Careers</a></li>
+                        <li><a href="https://www.anthropic.com/research">Safety & Research</a></li>
+                        <li><a href="mailto:enterprise@anthropic.com">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Anthropic PBC. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://www.anthropic.com/legal/privacy">Privacy Policy</a>
+                    <a href="https://www.anthropic.com/legal/terms">Terms of Service</a>
+                    <a href="https://www.anthropic.com/legal/security">Security</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Fade in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Tab functionality
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('mobile-open');
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.remove('mobile-open');
+        }
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Animate metrics on scroll
+        const animateValue = (element, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value + (element.dataset.suffix || '');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        // Initialize animations when elements are visible
+        const metricObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    const valueElement = entry.target.querySelector('.metric-value, .productivity-metric-value');
+                    if (valueElement && !valueElement.textContent.includes('x')) {
+                        const value = parseInt(valueElement.textContent);
+                        if (!isNaN(value)) {
+                            valueElement.textContent = '0';
+                            animateValue(valueElement, 0, value, 1500);
+                        }
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.metric, .productivity-metric').forEach(el => metricObserver.observe(el));
+    </script>
+</body>
+</html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEICO Regulatory Compliance Demo | Powered by Claude</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --geico-blue: #003D7A;
+            --geico-navy: #002B5C;
+            --geico-bright-blue: #0066CC;
+            --geico-green: #78BE20;
+            --geico-green-dark: #5FA015;
+            --geico-orange: #FF6B00;
+            --geico-yellow: #FFD100;
+            --geico-red: #DC3545;
+            --white: #FFFFFF;
+            --light-gray: #F5F5F5;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+            --font-headline: 'Oswald', 'Arial Narrow', sans-serif;
+            --font-body: 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--geico-navy);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 2rem; }
+        .logo { font-family: var(--font-headline); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
+        .logo span { color: var(--geico-green); }
+
+        .alert-badge {
+            background: var(--geico-red);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            animation: pulse-alert 2s infinite;
+        }
+
+        @keyframes pulse-alert {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+        .timer { font-family: var(--font-headline); font-size: 1.5rem; color: var(--geico-green); }
+
+        .btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 4px;
+            border: none;
+            font-family: var(--font-headline);
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { background: var(--geico-green); color: var(--white); }
+        .btn-primary:hover { background: var(--geico-green-dark); }
+        .btn-secondary { background: transparent; color: var(--white); border: 2px solid var(--white); }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px);
+            padding: 2rem;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            max-width: 850px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .welcome-header {
+            background: linear-gradient(135deg, var(--geico-red), var(--geico-orange));
+            color: var(--white);
+            padding: 2rem;
+        }
+
+        .welcome-header h1 {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .reg-alert-box {
+            background: var(--white);
+            color: var(--dark-gray);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .reg-id {
+            font-family: var(--font-headline);
+            color: var(--geico-red);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reg-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .reg-meta {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .welcome-body { padding: 2rem; }
+
+        .impact-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .impact-stat {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .impact-value {
+            font-family: var(--font-headline);
+            font-size: 1.8rem;
+            color: var(--geico-blue);
+        }
+
+        .impact-value.urgent { color: var(--geico-red); }
+
+        .impact-label { font-size: 0.8rem; color: var(--medium-gray); margin-top: 0.25rem; }
+
+        .start-btn { width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem; }
+
+        /* Dashboard */
+        .dashboard { display: none; padding: 1.5rem; max-width: 1700px; margin: 0 auto; }
+        .dashboard.active { display: block; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.25rem;
+        }
+
+        .panel-title {
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        /* State Tracker */
+        .state-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 450px; overflow-y: auto; }
+
+        .state-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem;
+            background: var(--light-gray);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+        }
+
+        .state-item.critical { border-left-color: var(--geico-red); background: rgba(220, 53, 69, 0.1); }
+        .state-item.warning { border-left-color: var(--geico-orange); background: rgba(255, 107, 0, 0.1); }
+        .state-item.ok { border-left-color: var(--geico-green); background: rgba(120, 190, 32, 0.1); }
+
+        .state-code { font-weight: 700; width: 28px; }
+        .state-info { flex: 1; font-size: 0.8rem; }
+        .state-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-critical { background: var(--geico-red); color: white; }
+        .badge-warning { background: var(--geico-orange); color: white; }
+        .badge-ok { background: var(--geico-green); color: white; }
+
+        /* Analysis Panel */
+        .analysis-panel { display: flex; flex-direction: column; }
+
+        .analysis-header {
+            background: var(--geico-blue);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-header h3 {
+            font-family: var(--font-headline);
+            text-transform: uppercase;
+            font-size: 1rem;
+        }
+
+        .analysis-header p { font-size: 0.85rem; opacity: 0.9; margin-top: 0.25rem; }
+
+        .agent-progress { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem; }
+
+        .progress-item {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-name { font-weight: 600; font-size: 0.9rem; }
+        .progress-status { font-size: 0.75rem; text-transform: uppercase; }
+
+        .progress-bar {
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--geico-green);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.analyzing { background: var(--geico-bright-blue); }
+
+        /* Findings */
+        .findings-section { margin-top: 1rem; }
+        .findings-section h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .finding-item {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--geico-orange);
+            animation: slideIn 0.3s ease;
+        }
+
+        .finding-item.complete { border-left-color: var(--geico-green); }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .finding-title { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; }
+        .finding-desc { font-size: 0.8rem; color: var(--medium-gray); }
+
+        /* Chat Panel */
+        .chat-panel { display: flex; flex-direction: column; height: 500px; }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-message {
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            animation: slideIn 0.3s ease;
+        }
+
+        .chat-message.agent {
+            background: var(--light-gray);
+            margin-right: 2rem;
+        }
+
+        .chat-message.ai {
+            background: var(--geico-blue);
+            color: white;
+            margin-left: 2rem;
+        }
+
+        .chat-sender {
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .chat-input:focus { outline: none; border-color: var(--geico-bright-blue); }
+
+        .chat-send {
+            padding: 0.75rem 1rem;
+            background: var(--geico-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 1.5rem;
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .results-section.active { display: grid; }
+
+        .result-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .result-card:hover {
+            border-color: var(--geico-green);
+            transform: translateY(-3px);
+        }
+
+        .result-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+        .result-title {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-desc { font-size: 0.8rem; color: var(--medium-gray); }
+
+        .result-badge {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            background: var(--geico-green);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Audit Section */
+        .audit-section {
+            margin-top: 1.5rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: none;
+        }
+
+        .audit-section.active { display: block; }
+
+        .audit-header {
+            background: var(--geico-navy);
+            color: white;
+            padding: 1.25rem;
+        }
+
+        .audit-header h3 { font-family: var(--font-headline); text-transform: uppercase; }
+
+        .audit-body { padding: 1.5rem; }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .audit-card {
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--geico-blue);
+        }
+
+        .audit-card h4 {
+            font-family: var(--font-headline);
+            color: var(--geico-blue);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .audit-card ul { list-style: none; font-size: 0.85rem; }
+        .audit-card li { padding: 0.3rem 0; padding-left: 1.25rem; position: relative; }
+        .audit-card li::before { content: '✓'; position: absolute; left: 0; color: var(--geico-green); font-weight: bold; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .impact-summary { grid-template-columns: repeat(2, 1fr); }
+            .results-section { grid-template-columns: repeat(2, 1fr); }
+            .audit-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">GEICO <span>×</span> Claude</div>
+            <div class="alert-badge">REGULATORY ALERT - ACTION REQUIRED</div>
+        </div>
+        <div class="header-right">
+            <div class="timer" id="timer">00:00.0</div>
+            <button class="btn btn-secondary" onclick="resetDemo()">Reset</button>
+            <button class="btn btn-primary" id="actionBtn" onclick="toggleDemo()">Pause</button>
+        </div>
+    </header>
+
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <h1>New Regulatory Alert Detected</h1>
+                <div class="reg-alert-box">
+                    <div class="reg-id">CA-DOI-2024-1847</div>
+                    <div class="reg-title">California Usage-Based Insurance Disclosure Requirements</div>
+                    <div class="reg-meta">
+                        <span>Effective: January 15, 2025</span>
+                        <span>Response Deadline: December 1, 2024</span>
+                        <span>Priority: HIGH</span>
+                    </div>
+                </div>
+            </div>
+            <div class="welcome-body">
+                <p style="margin-bottom: 1.5rem; color: var(--medium-gray);">The California Department of Insurance has issued new disclosure requirements for all usage-based insurance (UBI) and telematics programs. This regulation requires immediate compliance assessment across all California policies.</p>
+
+                <div class="impact-summary">
+                    <div class="impact-stat">
+                        <div class="impact-value urgent">2.3M</div>
+                        <div class="impact-label">CA Policies Affected</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-value">847</div>
+                        <div class="impact-label">Policy Forms to Review</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-value">23</div>
+                        <div class="impact-label">Days Until Deadline</div>
+                    </div>
+                    <div class="impact-stat">
+                        <div class="impact-value">12</div>
+                        <div class="impact-label">New Disclosures Required</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 107, 0, 0.1); border: 2px solid var(--geico-orange); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <strong style="color: var(--geico-orange);">Key Requirements:</strong>
+                    <ul style="margin-top: 0.5rem; margin-left: 1.5rem; font-size: 0.9rem;">
+                        <li>Clear disclosure of all data collected via telematics devices</li>
+                        <li>Consumer opt-out rights for data sharing with third parties</li>
+                        <li>Annual summary of how driving data affected premium</li>
+                        <li>Right to obtain copy of all collected telematics data</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary start-btn" onclick="startDemo()">
+                    Begin Compliance Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <div class="dashboard-grid">
+            <!-- State Tracker -->
+            <div class="panel">
+                <h3 class="panel-title">50-State Tracker</h3>
+                <div class="state-list" id="stateList">
+                    <div class="state-item critical"><span class="state-code">CA</span><span class="state-info">UBI Disclosure - NEW</span><span class="state-badge badge-critical">Action</span></div>
+                    <div class="state-item warning"><span class="state-code">NY</span><span class="state-info">Rate Filing Due 12/15</span><span class="state-badge badge-warning">Pending</span></div>
+                    <div class="state-item warning"><span class="state-code">TX</span><span class="state-info">Form Update Required</span><span class="state-badge badge-warning">Review</span></div>
+                    <div class="state-item ok"><span class="state-code">FL</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">PA</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">IL</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">OH</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">GA</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">NC</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                    <div class="state-item ok"><span class="state-code">MI</span><span class="state-info">All filings current</span><span class="state-badge badge-ok">OK</span></div>
+                </div>
+            </div>
+
+            <!-- Analysis Panel -->
+            <div class="panel analysis-panel">
+                <div class="analysis-header">
+                    <h3>CA-DOI-2024-1847 Impact Analysis</h3>
+                    <p>AI agents scanning policy documents, forms, and disclosures for compliance gaps</p>
+                </div>
+
+                <div class="agent-progress">
+                    <div class="progress-item" id="agent-regulation">
+                        <div class="progress-header">
+                            <span class="progress-name">Regulation Parser</span>
+                            <span class="progress-status" id="status-regulation">Pending</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-regulation" style="width: 0%"></div></div>
+                    </div>
+                    <div class="progress-item" id="agent-policy">
+                        <div class="progress-header">
+                            <span class="progress-name">Policy Form Scanner</span>
+                            <span class="progress-status" id="status-policy">Pending</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-policy" style="width: 0%"></div></div>
+                    </div>
+                    <div class="progress-item" id="agent-disclosure">
+                        <div class="progress-header">
+                            <span class="progress-name">Disclosure Validator</span>
+                            <span class="progress-status" id="status-disclosure">Pending</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-disclosure" style="width: 0%"></div></div>
+                    </div>
+                    <div class="progress-item" id="agent-training">
+                        <div class="progress-header">
+                            <span class="progress-name">Training Generator</span>
+                            <span class="progress-status" id="status-training">Pending</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="fill-training" style="width: 0%"></div></div>
+                    </div>
+                </div>
+
+                <div class="findings-section">
+                    <h4>Compliance Findings</h4>
+                    <div id="findingsList"></div>
+                </div>
+            </div>
+
+            <!-- Agent Q&A Chat -->
+            <div class="panel chat-panel">
+                <h3 class="panel-title">Agent Compliance Q&A</h3>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message ai">
+                        <div class="chat-sender">Claude Compliance Assistant</div>
+                        I'm monitoring the new CA-DOI-2024-1847 regulation. Ask me anything about how it affects GEICO policies, required actions, or customer communications.
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Ask about the regulation..." onkeypress="handleKeyPress(event)">
+                    <button class="chat-send" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="result-card" onclick="alert('Downloading compliance gap report...')">
+                <div class="result-icon">📋</div>
+                <div class="result-title">Gap Analysis Report</div>
+                <div class="result-desc">12 compliance gaps identified with remediation steps</div>
+                <div class="result-badge">Download PDF</div>
+            </div>
+            <div class="result-card" onclick="alert('Opening policy language editor...')">
+                <div class="result-icon">📝</div>
+                <div class="result-title">Policy Language Updates</div>
+                <div class="result-desc">Draft language for 8 policy forms ready for review</div>
+                <div class="result-badge">Review Drafts</div>
+            </div>
+            <div class="result-card" onclick="alert('Opening training portal...')">
+                <div class="result-icon">🎓</div>
+                <div class="result-title">Agent Training Module</div>
+                <div class="result-desc">15-minute course on new CA UBI requirements</div>
+                <div class="result-badge">Launch Training</div>
+            </div>
+            <div class="result-card" onclick="alert('Opening customer templates...')">
+                <div class="result-icon">✉️</div>
+                <div class="result-title">Customer Communications</div>
+                <div class="result-desc">Email and letter templates for affected policyholders</div>
+                <div class="result-badge">View Templates</div>
+            </div>
+        </div>
+
+        <!-- Audit Section -->
+        <div class="audit-section" id="auditSection">
+            <div class="audit-header">
+                <h3>Regulatory Compliance Audit Trail</h3>
+            </div>
+            <div class="audit-body">
+                <div class="audit-grid">
+                    <div class="audit-card">
+                        <h4>Analysis Documentation</h4>
+                        <ul>
+                            <li>Full regulation text parsed and indexed</li>
+                            <li>847 policy forms analyzed</li>
+                            <li>Cross-reference to existing disclosures</li>
+                            <li>Gap analysis methodology documented</li>
+                            <li>All findings timestamped</li>
+                        </ul>
+                    </div>
+                    <div class="audit-card">
+                        <h4>Regulatory Alignment</h4>
+                        <ul>
+                            <li>CA Insurance Code compliance verified</li>
+                            <li>CCPA privacy alignment confirmed</li>
+                            <li>NAIC model law comparison</li>
+                            <li>Multi-state impact assessment</li>
+                            <li>Filing deadline tracking</li>
+                        </ul>
+                    </div>
+                    <div class="audit-card">
+                        <h4>Deliverables Tracking</h4>
+                        <ul>
+                            <li>Gap report generated and logged</li>
+                            <li>Policy language changes tracked</li>
+                            <li>Training completion metrics ready</li>
+                            <li>Customer communication log</li>
+                            <li>DOI filing preparation status</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let isPaused = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval;
+        let currentStep = 0;
+
+        const steps = [
+            { time: 500, agent: 'regulation', progress: 20, status: 'Analyzing...', statusClass: 'analyzing' },
+            { time: 1200, agent: 'regulation', progress: 60, finding: { title: 'Regulation Parsed', desc: '4 new disclosure requirements identified, 2 data handling mandates, 1 consumer rights provision' }},
+            { time: 2000, agent: 'regulation', progress: 100, status: 'Complete' },
+            { time: 2200, agent: 'policy', progress: 15, status: 'Scanning...', statusClass: 'analyzing' },
+            { time: 3000, agent: 'policy', progress: 45, finding: { title: 'UBI Policy Forms Identified', desc: 'Found 23 policy forms with telematics references. 8 forms require immediate updates.' }},
+            { time: 4000, agent: 'policy', progress: 75, finding: { title: 'Disclosure Gap Found', desc: 'Current forms missing: data collection disclosure, third-party sharing opt-out, annual impact summary' }},
+            { time: 4800, agent: 'policy', progress: 100, status: 'Complete' },
+            { time: 5000, agent: 'disclosure', progress: 25, status: 'Validating...', statusClass: 'analyzing' },
+            { time: 5800, agent: 'disclosure', progress: 60, finding: { title: 'Existing Disclosures Mapped', desc: 'Current privacy notice covers 4 of 12 required disclosures. 8 new disclosures needed.' }},
+            { time: 6600, agent: 'disclosure', progress: 100, status: 'Complete', finding: { title: 'Draft Disclosures Generated', desc: 'AI-generated compliant disclosure language ready for legal review. Estimated 95% alignment with regulation.' }},
+            { time: 7000, agent: 'training', progress: 30, status: 'Generating...', statusClass: 'analyzing' },
+            { time: 7800, agent: 'training', progress: 70, finding: { title: 'Training Content Created', desc: 'Agent training module: 15 min course, 10 quiz questions, customer FAQ guide, escalation procedures' }},
+            { time: 8500, agent: 'training', progress: 100, status: 'Complete' },
+            { time: 9000, action: 'showResults' },
+        ];
+
+        const chatResponses = {
+            'discount': 'Yes, you can still offer UBI discounts in California. The new regulation doesn\'t restrict discount programs—it requires clearer disclosure of how telematics data is collected and used to calculate those discounts. Agents should explain: (1) what data is collected, (2) how it affects premium, and (3) how customers can opt out of third-party data sharing.',
+            'opt-out': 'Under CA-DOI-2024-1847, customers must be given a clear opt-out for third-party data sharing. However, opting out of data sharing does NOT mean they can opt out of data collection if they want the UBI discount. The key distinction: collection for rating purposes vs. sharing with external parties.',
+            'deadline': 'The compliance deadline is December 1, 2024 for filing updated forms with CA DOI. Policies must include new disclosures for any policy issued or renewed after January 15, 2025. I recommend prioritizing: (1) policy form updates by Nov 15, (2) system updates by Dec 1, (3) agent training by Dec 15.',
+            'customer': 'For existing CA UBI customers, GEICO should send a notification letter explaining the new disclosure rights. I\'ve generated a template in the Customer Communications section. Key points to communicate: their right to see collected data, annual premium impact summary, and how to request data deletion.',
+            'default': 'That\'s a great question about the CA UBI regulation. Based on my analysis of CA-DOI-2024-1847, the regulation primarily focuses on transparency and consumer rights for telematics data. Would you like me to explain how this affects a specific policy type, the timeline for compliance, or customer communication requirements?'
+        };
+
+        function startDemo() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            isRunning = true;
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+            processSteps();
+        }
+
+        function updateTimer() {
+            if (!isPaused) {
+                elapsedTime = Date.now() - startTime;
+                const seconds = Math.floor(elapsedTime / 1000);
+                const tenths = Math.floor((elapsedTime % 1000) / 100);
+                document.getElementById('timer').textContent =
+                    `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}.${tenths}`;
+            }
+        }
+
+        function processSteps() {
+            if (currentStep >= steps.length || !isRunning) return;
+            const step = steps[currentStep];
+
+            setTimeout(() => {
+                if (isPaused) { setTimeout(() => processSteps(), 100); return; }
+
+                if (step.action === 'showResults') {
+                    document.getElementById('resultsSection').classList.add('active');
+                    document.getElementById('auditSection').classList.add('active');
+                    addChatMessage('ai', 'Analysis complete! I\'ve identified 12 compliance gaps and generated all required deliverables. The gap report, policy language updates, training module, and customer communication templates are ready for review. What questions do you have about implementing these changes?');
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                } else {
+                    if (step.agent && step.progress !== undefined) {
+                        document.getElementById(`fill-${step.agent}`).style.width = `${step.progress}%`;
+                        if (step.status) {
+                            document.getElementById(`status-${step.agent}`).textContent = step.status;
+                        }
+                    }
+                    if (step.finding) {
+                        addFinding(step.finding);
+                    }
+                }
+
+                currentStep++;
+                processSteps();
+            }, currentStep === 0 ? step.time : step.time - steps[currentStep - 1].time);
+        }
+
+        function addFinding(finding) {
+            const list = document.getElementById('findingsList');
+            const item = document.createElement('div');
+            item.className = 'finding-item';
+            item.innerHTML = `<div class="finding-title">${finding.title}</div><div class="finding-desc">${finding.desc}</div>`;
+            list.appendChild(item);
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function addChatMessage(type, text) {
+            const messages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = `chat-message ${type}`;
+            msg.innerHTML = `<div class="chat-sender">${type === 'ai' ? 'Claude Compliance Assistant' : 'Agent'}</div>${text}`;
+            messages.appendChild(msg);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addChatMessage('agent', text);
+            input.value = '';
+
+            setTimeout(() => {
+                let response = chatResponses.default;
+                const lower = text.toLowerCase();
+                if (lower.includes('discount') || lower.includes('ubi')) response = chatResponses.discount;
+                else if (lower.includes('opt') || lower.includes('out')) response = chatResponses['opt-out'];
+                else if (lower.includes('deadline') || lower.includes('when') || lower.includes('date')) response = chatResponses.deadline;
+                else if (lower.includes('customer') || lower.includes('notify') || lower.includes('letter')) response = chatResponses.customer;
+                addChatMessage('ai', response);
+            }, 1000);
+        }
+
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function toggleDemo() {
+            isPaused = !isPaused;
+            document.getElementById('actionBtn').textContent = isPaused ? 'Resume' : 'Pause';
+            if (!isPaused) startTime = Date.now() - elapsedTime;
+        }
+
+        function resetDemo() {
+            isRunning = false; isPaused = false; currentStep = 0; elapsedTime = 0;
+            clearInterval(timerInterval);
+            document.getElementById('timer').textContent = '00:00.0';
+            document.getElementById('welcomeScreen').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('auditSection').classList.remove('active');
+            document.getElementById('findingsList').innerHTML = '';
+            document.getElementById('chatMessages').innerHTML = `<div class="chat-message ai"><div class="chat-sender">Claude Compliance Assistant</div>I'm monitoring the new CA-DOI-2024-1847 regulation. Ask me anything about how it affects GEICO policies, required actions, or customer communications.</div>`;
+            ['regulation', 'policy', 'disclosure', 'training'].forEach(agent => {
+                document.getElementById(`fill-${agent}`).style.width = '0%';
+                document.getElementById(`status-${agent}`).textContent = 'Pending';
+            });
+        }
+    </script>
+</body>
+</html>
