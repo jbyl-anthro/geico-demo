@@ -595,7 +595,7 @@
 
         .resources-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
@@ -635,7 +635,13 @@
             line-height: 1.5;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
+            .resources-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
             .resources-grid {
                 grid-template-columns: 1fr;
             }
@@ -1862,6 +1868,11 @@
                     <div class="resource-icon">📄</div>
                     <h4>Using CLAUDE.md Files</h4>
                     <p>Customizing Claude Code for your codebase with persistent project context and configurations.</p>
+                </a>
+                <a href="https://claude.com/blog/claude-code-plugins" target="_blank" class="resource-card">
+                    <div class="resource-icon">🔌</div>
+                    <h4>Claude Code Plugins</h4>
+                    <p>Customizable packages combining slash commands, agents, MCP servers, and hooks you can install instantly.</p>
                 </a>
             </div>
 
