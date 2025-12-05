@@ -593,6 +593,54 @@
             opacity: 1;
         }
 
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .resource-card {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .resource-card:hover {
+            border-color: var(--geico-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .resource-card h4 {
+            font-family: var(--font-headline);
+            font-size: 1rem;
+            color: var(--geico-navy);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .resource-card p {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .integration-callout {
             background: var(--gradient-bg);
             color: var(--white);
@@ -1796,6 +1844,24 @@
                         <p>Explore our latest technical deep-dives on AI agents, code execution, developer tools, and the systems powering Claude.</p>
                     </div>
                     <div class="blog-arrow">→</div>
+                </a>
+            </div>
+
+            <div class="resources-grid fade-in">
+                <a href="https://claude.com/blog/skills-explained" target="_blank" class="resource-card">
+                    <div class="resource-icon">🧩</div>
+                    <h4>Skills Explained</h4>
+                    <p>How Skills compares to prompts, Projects, MCP, and subagents in Claude's agentic ecosystem.</p>
+                </a>
+                <a href="https://claude.com/blog/how-to-create-skills-key-steps-limitations-and-examples" target="_blank" class="resource-card">
+                    <div class="resource-icon">🛠️</div>
+                    <h4>How to Create Skills</h4>
+                    <p>Key steps, limitations, and examples for building custom skills that extend Claude's capabilities.</p>
+                </a>
+                <a href="https://claude.com/blog/using-claude-md-files" target="_blank" class="resource-card">
+                    <div class="resource-icon">📄</div>
+                    <h4>Using CLAUDE.md Files</h4>
+                    <p>Customizing Claude Code for your codebase with persistent project context and configurations.</p>
                 </a>
             </div>
 
